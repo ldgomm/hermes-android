@@ -82,9 +82,7 @@ fun StoreMessageView(
                     )
 
                     Text(
-                        text = message.date.formatMessageDate(context),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        text = message.date.formatMessageDate(context), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
                 Spacer(modifier = Modifier.width(60.dp))

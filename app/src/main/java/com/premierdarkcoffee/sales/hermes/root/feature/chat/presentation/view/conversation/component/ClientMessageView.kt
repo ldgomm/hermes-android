@@ -80,9 +80,7 @@ fun ClientMessageView(
             TEXT -> {
                 Spacer(Modifier.padding(horizontal = 60.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
                         modifier = Modifier
@@ -91,33 +89,25 @@ fun ClientMessageView(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.End
                     ) {
-                        Text(text = message.text,
-                             fontSize = 16.sp,
-                             modifier = Modifier
-                                 .clip(RoundedCornerShape(12.dp))
-                                 .clickable {
-                                     if (product != null) {
-                                         expanded = !expanded
-                                     }
-                                 }
-                                 .background(
-                                     MaterialTheme.colorScheme.primary.copy(
-                                         if (isSystemInDarkTheme()) 0.2f else 0.9f
-                                     )
-                                 )
-                                 .padding(8.dp),
-                             color = Color.White,
-                             textAlign = TextAlign.Start)
+                        Text(text = message.text, fontSize = 16.sp, modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                if (product != null) {
+                                    expanded = !expanded
+                                }
+                            }
+                            .background(
+                                MaterialTheme.colorScheme.primary.copy(
+                                    if (isSystemInDarkTheme()) 0.2f else 0.9f
+                                )
+                            )
+                            .padding(8.dp), color = Color.White, textAlign = TextAlign.Start)
 
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.End,
-                            modifier = Modifier.fillMaxWidth()
+                            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = message.date.formatMessageDate(context),
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                text = message.date.formatMessageDate(context), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             )
                         }
                     }
@@ -149,12 +139,9 @@ fun ClientMessageView(
             exit = shrinkVertically(animationSpec = tween(durationMillis = 500)) + fadeOut()
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
 //                    .horizontalScroll(rememberScrollState())
-                ,
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
+                , horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(modifier = Modifier.fillMaxWidth(0.9f)) {
                     product?.let {

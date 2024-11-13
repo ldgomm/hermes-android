@@ -131,10 +131,9 @@ fun SearchView(
     var doNotShowAgainChecked by remember { mutableStateOf(false) }
     val doNotShowAgainDistanceAlert: Boolean = SharedPreferencesHelper.getDoNotShowAgainDistanceAlert(context)
 
-    val groupedMessages: List<Pair<Date, List<ChatMessage>>> =
-        groupChatMessagesByDay(chatMessages).toSortedMap().map { (key, value) ->
-            key to value.sortedBy { it.date }
-        }
+    val groupedMessages: List<Pair<Date, List<ChatMessage>>> = groupChatMessagesByDay(chatMessages).toSortedMap().map { (key, value) ->
+        key to value.sortedBy { it.date }
+    }
 
     LaunchedEffect(chatMessages.size, isTyping) {
         listState.animateScrollToItem(chatMessages.size)
@@ -191,12 +190,10 @@ fun SearchView(
                 })
             }) {
             LazyColumn(
-                state = listState,
-                modifier = Modifier
+                state = listState, modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.Bottom
+                    .padding(8.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 item {
                     if (chatMessages.isEmpty()) {
@@ -327,8 +324,7 @@ fun SearchView(
                         .onFocusChanged { isFocused = it.isFocused },
                     placeholder = {
                         Text(
-                            text = if (isTyping) stringResource(id = waiting_for_response) else stringResource(id = ask_anything),
-                            color = Color.Gray
+                            text = if (isTyping) stringResource(id = waiting_for_response) else stringResource(id = ask_anything), color = Color.Gray
                         )
                     },
                     singleLine = false,
@@ -366,34 +362,30 @@ fun SearchView(
     }
 
     if (!doNotShowAgainDistanceAlert && showDistanceAdviceDialog) {
-        AlertDialog(onDismissRequest = { showDistanceAdviceDialog = false },
-                    title = { Text(stringResource(id = distance_advice_title)) },
-                    text = {
-                        Column {
-                            Text(stringResource(id = distance_advice_description))
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Checkbox(checked = doNotShowAgainChecked, onCheckedChange = { checked ->
-                                    doNotShowAgainChecked = checked
-                                    SharedPreferencesHelper.setDoNotShowAgainDistanceAlert(context, checked)
-                                })
-                                Text(stringResource(id = do_not_show_again))
-                            }
-                        }
-                    },
-                    confirmButton = {
-                        Button(onClick = {
-                            showDistanceAdviceDialog = false
-                            openBottomSheet = true
-                        }) {
-                            Text(stringResource(id = understood))
-                        }
-                    },
-                    dismissButton = {
-                        Button(onClick = { showDistanceAdviceDialog = false }) {
-                            Text(stringResource(id = cancel))
-                        }
+        AlertDialog(onDismissRequest = { showDistanceAdviceDialog = false }, title = { Text(stringResource(id = distance_advice_title)) }, text = {
+            Column {
+                Text(stringResource(id = distance_advice_description))
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = doNotShowAgainChecked, onCheckedChange = { checked ->
+                        doNotShowAgainChecked = checked
+                        SharedPreferencesHelper.setDoNotShowAgainDistanceAlert(context, checked)
                     })
+                    Text(stringResource(id = do_not_show_again))
+                }
+            }
+        }, confirmButton = {
+            Button(onClick = {
+                showDistanceAdviceDialog = false
+                openBottomSheet = true
+            }) {
+                Text(stringResource(id = understood))
+            }
+        }, dismissButton = {
+            Button(onClick = { showDistanceAdviceDialog = false }) {
+                Text(stringResource(id = cancel))
+            }
+        })
     }
 
     if (openBottomSheet) {
@@ -432,34 +424,23 @@ fun SearchPhrasesList(onPhraseClick: (SearchPhrase) -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             searchPhrases.forEach { phrase ->
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .width(180.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        .border(
-                            width = 1.dp,
-                            color = Color.Gray.copy(alpha = 0.5f),
-                            shape = RoundedCornerShape(15.dp)
-                        )
-                        .clickable { onPhraseClick(phrase) }
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                Column(modifier = Modifier
+                    .padding(8.dp)
+                    .width(180.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .border(
+                        width = 1.dp, color = Color.Gray.copy(alpha = 0.5f), shape = RoundedCornerShape(15.dp)
+                    )
+                    .clickable { onPhraseClick(phrase) }
+                    .padding(16.dp),
+                       horizontalAlignment = Alignment.Start,
+                       verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Image(
-                        imageVector = phrase.icon,
-                        contentDescription = phrase.text,
-                        modifier = Modifier.size(32.dp),
-                        contentScale = ContentScale.Fit
+                        imageVector = phrase.icon, contentDescription = phrase.text, modifier = Modifier.size(32.dp), contentScale = ContentScale.Fit
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = phrase.text,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 14.sp,
-                        maxLines = 3,
-                        textAlign = TextAlign.Start
+                        text = phrase.text, style = MaterialTheme.typography.bodySmall, fontSize = 14.sp, maxLines = 3, textAlign = TextAlign.Start
                     )
                 }
             }

@@ -78,8 +78,7 @@ fun DistanceMapView(
         )
 
         OutlinedButton(
-            onClick = onNavigateToUserViewButtonClicked,
-            modifier = Modifier
+            onClick = onNavigateToUserViewButtonClicked, modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(vertical = 8.dp)
         ) {
@@ -91,9 +90,7 @@ fun DistanceMapView(
         }
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            GoogleMap(modifier = Modifier.fillMaxSize(),
-                      cameraPositionState = cameraPositionState,
-                      onMapLoaded = { isMapLoaded = true }) {
+            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, onMapLoaded = { isMapLoaded = true }) {
                 val location = LatLng(userLocation.coordinates[1], userLocation.coordinates[0])
                 Marker(state = MarkerState(location), title = stringResource(id = R.string.you_are_here))
                 Circle(
@@ -125,9 +122,7 @@ fun DistanceMapView(
                     onClick = {
                         val decrement = if (distance in 1..10) 1 else 10
                         onDistanceChange(distance - decrement)
-                    },
-                    enabled = distance > 1,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    }, enabled = distance > 1, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(if (distance in 1..10) "-1 km" else "-10 km")
                 }
@@ -142,9 +137,7 @@ fun DistanceMapView(
                     onClick = {
                         val increment = if (distance in 1..10) 1 else 10
                         onDistanceChange(distance + increment)
-                    },
-                    enabled = distance < 500,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    }, enabled = distance < 500, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(if (distance in 1..10) "+1 km" else "+10 km")
                 }

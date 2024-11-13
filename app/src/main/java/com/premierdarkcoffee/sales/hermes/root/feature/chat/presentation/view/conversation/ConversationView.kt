@@ -185,35 +185,34 @@ fun ConversationView(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Input field
-                OutlinedTextField(
-                    value = inputText,
-                    onValueChange = { inputText = it },
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(
-                            Color.Transparent, shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(8.dp),
-                    placeholder = {
-                        Text(
-                            stringResource(id = R.string.type_a_message), color = Color.Gray
-                        )
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(8.dp),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(onSend = {
-                        messages.firstOrNull()?.let { value ->
-                            val message = MessageDto(
-                                text = inputText, fromClient = true, clientId = value.clientId, storeId = value.storeId
-                            )
-                            Log.d(
-                                TAG, "ConversationView: $message"
-                            )
-                            onSendMessageToStoreButtonClicked(message)
-                            inputText = ""
-                        }
-                    })
+                OutlinedTextField(value = inputText,
+                                  onValueChange = { inputText = it },
+                                  modifier = Modifier
+                                      .weight(1f)
+                                      .background(
+                                          Color.Transparent, shape = RoundedCornerShape(8.dp)
+                                      )
+                                      .padding(8.dp),
+                                  placeholder = {
+                                      Text(
+                                          stringResource(id = R.string.type_a_message), color = Color.Gray
+                                      )
+                                  },
+                                  singleLine = true,
+                                  shape = RoundedCornerShape(8.dp),
+                                  keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
+                                  keyboardActions = KeyboardActions(onSend = {
+                                      messages.firstOrNull()?.let { value ->
+                                          val message = MessageDto(
+                                              text = inputText, fromClient = true, clientId = value.clientId, storeId = value.storeId
+                                          )
+                                          Log.d(
+                                              TAG, "ConversationView: $message"
+                                          )
+                                          onSendMessageToStoreButtonClicked(message)
+                                          inputText = ""
+                                      }
+                                  })
                 )
                 Spacer(modifier = Modifier.width(4.dp))
 
