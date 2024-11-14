@@ -17,7 +17,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,11 +25,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,18 +38,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.premierdarkcoffee.sales.hermes.R.drawable.check
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.user.User
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.Message
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageStatus.DELIVERED
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageStatus.READ
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageStatus.SENT
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType.AUDIO
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType.FILE
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType.IMAGE
@@ -110,9 +100,11 @@ fun ClientMessageView(
                                          expanded = !expanded
                                      }
                                  }
-                                 .background(MaterialTheme.colorScheme.primary.copy(
-                                     if (isSystemInDarkTheme()) 0.2f else 0.9f
-                                 ))
+                                 .background(
+                                     MaterialTheme.colorScheme.primary.copy(
+                                         if (isSystemInDarkTheme()) 0.2f else 0.9f
+                                     )
+                                 )
                                  .padding(8.dp),
                              color = Color.White,
                              textAlign = TextAlign.Start)
@@ -127,32 +119,6 @@ fun ClientMessageView(
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             )
-//                            when (message.status) {
-//                                SENT -> {
-//                                    Icon(
-//                                        imageVector = ImageVector.vectorResource(id = check),
-//                                        contentDescription = null,
-//                                        modifier = Modifier.size(12.dp)
-//                                    )
-//                                }
-//
-//                                DELIVERED, READ -> {
-//                                    Row {
-//                                        Icon(
-//                                            imageVector = ImageVector.vectorResource(id = check),
-//                                            contentDescription = null,
-//                                            modifier = Modifier.size(12.dp),
-//                                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-//                                        )
-//                                        Icon(
-//                                            imageVector = ImageVector.vectorResource(id = check),
-//                                            contentDescription = null,
-//                                            modifier = Modifier.size(12.dp),
-//                                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-//                                        )
-//                                    }
-//                                }
-//                            }
                         }
                     }
                 }

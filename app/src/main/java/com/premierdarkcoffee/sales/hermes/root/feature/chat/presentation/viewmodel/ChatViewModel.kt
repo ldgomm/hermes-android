@@ -148,7 +148,7 @@ class ChatViewModel @Inject constructor(
                         location = geoPoint.toGeoPointDto(),
                         distance = distance
                     )
-                    sendMessageToAIUseCase.invoke(getUrlFor(endpoint = "client"), request = request).toList().first()
+                    sendMessageToAIUseCase.invoke(getUrlFor(endpoint = "hermes"), request = request).toList().first()
                 }
 
                 handleAIResponse(responseResult)
@@ -285,7 +285,7 @@ class ChatViewModel @Inject constructor(
         completion: (Store) -> Unit
     ) {
         try {
-            getStoreByIdUseCase(getUrlFor("client/store", storeId = storeId)).collect { result ->
+            getStoreByIdUseCase(getUrlFor("hermes/store", storeId = storeId)).collect { result ->
                 result.onSuccess { storeDto ->
                     Log.d(TAG, "fetchStore: ${storeDto.name}")
                     completion(storeDto.toStore())

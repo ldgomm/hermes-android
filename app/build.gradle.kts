@@ -27,7 +27,6 @@ android {
         }
 
         buildConfigField("String", "API_KEY", "\"${rootProject.ext["apiKey"]}\"")
-        buildConfigField("String", "API_KEY", "\"${rootProject.ext["apiKey"]}\"")
     }
 
     buildTypes {
