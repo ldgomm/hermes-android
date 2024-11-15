@@ -58,7 +58,6 @@ fun DistanceMapView(
     onDistanceChange: (Int) -> Unit,
     onNavigateToUserViewButtonClicked: () -> Unit
 ) {
-
     var isMapLoaded by remember { mutableStateOf(false) }
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(userLocation.coordinates[1], userLocation.coordinates[0]), 10f)
@@ -123,11 +122,14 @@ fun DistanceMapView(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(
-                    onClick = { if (distance > 10) onDistanceChange(distance - 10) },
-                    enabled = distance > 10,
+                    onClick = {
+                        val decrement = if (distance in 1..10) 1 else 10
+                        onDistanceChange(distance - decrement)
+                    },
+                    enabled = distance > 1,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text("-10 km")
+                    Text(if (distance in 1..10) "-1 km" else "-10 km")
                 }
 
                 Text(
@@ -137,11 +139,14 @@ fun DistanceMapView(
                 )
 
                 Button(
-                    onClick = { if (distance < 500) onDistanceChange(distance + 10) },
+                    onClick = {
+                        val increment = if (distance in 1..10) 1 else 10
+                        onDistanceChange(distance + increment)
+                    },
                     enabled = distance < 500,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text("+10 km")
+                    Text(if (distance in 1..10) "+1 km" else "+10 km")
                 }
             }
         }

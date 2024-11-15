@@ -114,7 +114,7 @@ class ChatViewModel @Inject constructor(
      */
     private fun initializeData() {
         viewModelScope.launch {
-            readProductsFromCart()
+//            readProductsFromCart()
             getMessages()
             readChatGPTMessages()
             readStores()
