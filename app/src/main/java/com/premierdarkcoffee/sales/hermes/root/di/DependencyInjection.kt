@@ -2,6 +2,8 @@ package com.premierdarkcoffee.sales.hermes.root.di
 
 import android.content.Context
 import androidx.room.Room
+import com.premierdarkcoffee.sales.hermes.root.feature.authentication.data.remote.AuthenticationService
+import com.premierdarkcoffee.sales.hermes.root.feature.authentication.presentation.viewmodel.AuthenticationServiceable
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.database.MainDatabase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.repository.CartRepository
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.repository.ChatRepository
@@ -96,6 +98,12 @@ object DependencyInjection {
     @Provides
     fun provideStoreServiceable(httpClient: HttpClient): StoreServiceable {
         return StoreService(httpClient)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAuthenticationServiceable(httpClient: HttpClient): AuthenticationServiceable {
+        return AuthenticationService(httpClient)
     }
 }
 
