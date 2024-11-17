@@ -1,19 +1,34 @@
 package com.premierdarkcoffee.sales.hermes.root.feature.authentication.presentation.viewmodel
 
+import android.app.Application
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.product.ImageDto
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.store.GeoPointDto
+import com.premierdarkcoffee.sales.hermes.root.util.function.getUrlFor
+import com.premierdarkcoffee.sales.hermes.root.util.key.getClientKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthenticationViewModel @Inject constructor() : ViewModel() {
+class AuthenticationViewModel @Inject constructor(
+    application: Application,
+    private val createClientUseCase: CreateClientUseCase
+) : AndroidViewModel(application) {
+    private val clientKey: String = getClientKey(getApplication<Application>().applicationContext)
 
     // State variable to track the sign-in process status
     var state = mutableStateOf(false)
@@ -24,7 +39,7 @@ class AuthenticationViewModel @Inject constructor() : ViewModel() {
      *
      * @param state A boolean representing whether the sign-in process is ongoing or not.
      */
-    private fun setSignInState(state: Boolean) {
+    fun setSignInState(state: Boolean) {
         this.state.value = state
     }
 
@@ -34,35 +49,55 @@ class AuthenticationViewModel @Inject constructor() : ViewModel() {
      * @param onSuccess A callback invoked upon successful sign-in.
      * @param onFailure A callback invoked when sign-in fails, with an exception provided.
      */
-    fun signInAnonymously(
-        onSuccess: (String) -> Unit,
+    fun signInWithFirebase(
+        tokenId: String,
+        onSuccess: (userName: String, token: String) -> Unit,
         onFailure: (exception: Throwable) -> Unit
     ) {
-        setSignInState(true)
         viewModelScope.launch {
-            delay(3000)  // Simulate a delay to represent processing time
             try {
+                val credential = GoogleAuthProvider.getCredential(tokenId, null)
                 val instance = FirebaseAuth.getInstance()
-                instance.signInAnonymously().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        viewModelScope.launch(Dispatchers.Main) {
-                            val userId = instance.currentUser?.uid
-                            if (userId != null) {
-                                handleUserCreation(userId, onSuccess, onFailure)
-                            } else {
-                                onFailure(Exception("User ID is null"))
-                            }
-                        }
-                    } else {
-                        setSignInState(false)
-                        onFailure(Exception("Sign in failed"))
-                    }
-                }.addOnFailureListener { exception ->
-                    setSignInState(false)
-                    onFailure(exception)
+                val task = instance.signInWithCredential(credential).await()
+                task.user?.let { user ->
+                    setSignInState(true)
+                    handleClientCreation(user, onSuccess, onFailure)
+                } ?: run {
+                    onFailure(Exception("User ID is null"))
                 }
             } catch (e: Exception) {
                 onFailure(e)
+            }
+        }
+    }
+
+    private fun handleClientCreation(
+        user: FirebaseUser,
+        onSuccess: (userName: String, token: String) -> Unit,
+        onFailure: (exception: Throwable) -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val client: ClientDto = getFakeClient(user)
+                Log.d(TAG, "AuthenticationViewModel | Store: $client")
+                createClientUseCase(getUrlFor("cronos-hermes"), PostClientRequest(key = clientKey, client = client)).collect { result ->
+                    result.onSuccess { response ->
+                        Log.d(TAG, "AuthenticationViewModel | signInWithFirebase: store created")
+                        withContext(Dispatchers.Main) {
+                            onSuccess(user.displayName ?: "No username", response.token)
+                        }
+                    }.onFailure { exception ->
+                        Log.e(TAG, "AuthenticationViewModel | signInWithFirebase: store wasn't created ${exception.message}")
+                        withContext(Dispatchers.Main) {
+                            onFailure(exception)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "AuthenticationViewModel | Exception: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    onFailure(e)
+                }
             }
         }
     }
@@ -94,3 +129,55 @@ class AuthenticationViewModel @Inject constructor() : ViewModel() {
         }
     }
 }
+
+@Serializable
+data class ClientDto(
+    val id: String,
+    val name: String,
+    val email: String,
+    val phone: String,
+    val image: ImageDto,
+    val location: GeoPointDto,
+    val createdAt: Long
+)
+
+fun getFakeClient(
+    user: FirebaseUser
+): ClientDto {
+    return ClientDto(
+        id = user.uid,
+        name = user.displayName ?: "No name",
+        email = user.email ?: "",
+        phone = user.phoneNumber ?: "",
+        image = ImageDto("", "", false),
+        location = GeoPointDto(type = "Point", coordinates = listOf(-78.484498, -0.182847)),
+        createdAt = System.currentTimeMillis()
+    )
+}
+
+@Serializable
+data class PostClientRequest(
+    val key: String? = null,
+    val client: ClientDto
+)
+
+class CreateClientUseCase @Inject constructor(private val serviceable: AuthenticationServiceable) {
+
+    operator fun invoke(
+        url: String,
+        request: PostClientRequest
+    ): Flow<Result<LoginResponse>> {
+        return serviceable.postClient(endpoint = url, request = request)
+    }
+}
+
+interface AuthenticationServiceable {
+
+    fun postClient(
+        endpoint: String,
+        request: PostClientRequest
+    ): Flow<Result<LoginResponse>>
+}
+
+@Serializable
+data class LoginResponse(val token: String)
