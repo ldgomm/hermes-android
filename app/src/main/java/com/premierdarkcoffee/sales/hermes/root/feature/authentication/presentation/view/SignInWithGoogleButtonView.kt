@@ -29,8 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.graphics.Color.Companion.Unspecified
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -40,14 +40,15 @@ import com.premierdarkcoffee.sales.hermes.R
 fun SignInWithGoogleButtonView(
     modifier: Modifier = Modifier,
     signedInState: Boolean = false,
-    primaryText: String = stringResource(id = R.string.sign_in_anonymously),
-    secondaryText: String = stringResource(id = R.string.privacy_with_you_always),
+    primaryText: String = "Sign in with Google",
+    secondaryText: String = "Please wait...",
+    icon: Int = R.drawable.google_logo,
     shape: CornerBasedShape = ShapeDefaults.Large,
     borderColor: Color = LightGray,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     borderStrokeWidth: Dp = 1.dp,
     progressIndicatorColor: Color = MaterialTheme.colorScheme.primary,
-    onSignInAnonymouslyButtonClicked: () -> Unit
+    onSignInWithGoogleButtonClicked: (Boolean) -> Unit
 ) {
 
     var buttonText by remember { mutableStateOf(primaryText) }
@@ -56,12 +57,11 @@ fun SignInWithGoogleButtonView(
         buttonText = if (signedInState) secondaryText else primaryText
     }
 
-    Surface(
-        modifier = modifier
-            .padding(horizontal = 40.dp)
-            .clickable(enabled = !signedInState) {
-                onSignInAnonymouslyButtonClicked()
-            }, shape = shape, border = BorderStroke(width = borderStrokeWidth, color = borderColor), color = backgroundColor
+    Surface(modifier = modifier
+        .padding(horizontal = 40.dp)
+        .clickable(enabled = !signedInState) {
+            onSignInWithGoogleButtonClicked(true)
+        }, shape = shape, border = BorderStroke(width = borderStrokeWidth, color = borderColor), color = backgroundColor
     ) {
         Row(
             modifier = Modifier
@@ -71,11 +71,7 @@ fun SignInWithGoogleButtonView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.lock_person),
-                contentDescription = "",
-                tint = MaterialTheme.colorScheme.primary
-            )
+            Icon(painter = painterResource(id = icon), "Google logo", tint = Unspecified)
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = buttonText, style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize))
             if (signedInState) {
