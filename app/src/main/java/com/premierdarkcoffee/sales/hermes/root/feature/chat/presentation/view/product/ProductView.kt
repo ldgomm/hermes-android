@@ -5,7 +5,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -163,7 +162,7 @@ fun ProductView(
                 }
 
                 Text(
-                    text = if (isStoreImageExpanded) store?.name ?: "" else product.category.xi,
+                    text = if (isStoreImageExpanded) store?.name ?: "" else product.category.subclass,
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White,
                     modifier = Modifier

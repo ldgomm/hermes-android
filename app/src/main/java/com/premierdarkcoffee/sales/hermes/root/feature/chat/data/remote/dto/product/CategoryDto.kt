@@ -4,9 +4,9 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.product
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CategoryDto(val mi: String, val ni: String, val xi: String) {
+data class CategoryDto(val group: String, val domain: String, val subclass: String) {
 
     fun toCategory(): Category {
-        return Category(mi = mi, ni = ni, xi = xi)
+        return Category(group = group, domain = domain, subclass = subclass)
     }
 }
