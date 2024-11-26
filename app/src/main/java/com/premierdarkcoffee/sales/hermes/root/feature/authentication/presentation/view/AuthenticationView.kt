@@ -55,7 +55,7 @@ fun AuthenticationView(oneTapState: OneTapSignInState,
         .statusBarsPadding()
         .navigationBarsPadding(), topBar = {
         MediumTopAppBar(title = {
-            Text("Maia", maxLines = 1, overflow = TextOverflow.Clip)
+            Text("Hermes", maxLines = 1, overflow = TextOverflow.Clip)
         }, scrollBehavior = scrollBehavior)
     }) {
         Column(Modifier.padding(it),

@@ -79,15 +79,15 @@ class AuthenticationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val client: ClientDto = getFakeClient(user)
-                Log.d(TAG, "AuthenticationViewModel | Store: $client")
-                createClientUseCase(getUrlFor("cronos-hermes"), PostClientRequest(key = clientKey, client = client)).collect { result ->
+                Log.d(TAG, "AuthenticationViewModel | Client: $client")
+                createClientUseCase(getUrlFor("cronos-client"), PostClientRequest(key = clientKey, client = client)).collect { result ->
                     result.onSuccess { response ->
-                        Log.d(TAG, "AuthenticationViewModel | signInWithFirebase: store created")
+                        Log.d(TAG, "AuthenticationViewModel | signInWithFirebase: client created")
                         withContext(Dispatchers.Main) {
                             onSuccess(user.displayName ?: "No username", response.token)
                         }
                     }.onFailure { exception ->
-                        Log.e(TAG, "AuthenticationViewModel | signInWithFirebase: store wasn't created ${exception.message}")
+                        Log.e(TAG, "AuthenticationViewModel | signInWithFirebase: client wasn't created ${exception.message}")
                         withContext(Dispatchers.Main) {
                             onFailure(exception)
                         }
