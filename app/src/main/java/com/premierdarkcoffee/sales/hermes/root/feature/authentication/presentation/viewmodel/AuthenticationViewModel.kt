@@ -9,13 +9,15 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.premierdarkcoffee.sales.hermes.root.feature.authentication.data.remote.dto.ClientDto
+import com.premierdarkcoffee.sales.hermes.root.feature.authentication.domain.model.PostClientRequest
+import com.premierdarkcoffee.sales.hermes.root.feature.authentication.domain.usecase.CreateClientUseCase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.product.ImageDto
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.store.GeoPointDto
 import com.premierdarkcoffee.sales.hermes.root.util.function.getUrlFor
 import com.premierdarkcoffee.sales.hermes.root.util.key.getClientKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -130,17 +132,6 @@ class AuthenticationViewModel @Inject constructor(
     }
 }
 
-@Serializable
-data class ClientDto(
-    val id: String,
-    val name: String,
-    val email: String,
-    val phone: String,
-    val image: ImageDto,
-    val location: GeoPointDto,
-    val createdAt: Long
-)
-
 fun getFakeClient(
     user: FirebaseUser
 ): ClientDto {
@@ -153,30 +144,6 @@ fun getFakeClient(
         location = GeoPointDto(type = "Point", coordinates = listOf(-78.484498, -0.182847)),
         createdAt = System.currentTimeMillis()
     )
-}
-
-@Serializable
-data class PostClientRequest(
-    val key: String? = null,
-    val client: ClientDto
-)
-
-class CreateClientUseCase @Inject constructor(private val serviceable: AuthenticationServiceable) {
-
-    operator fun invoke(
-        url: String,
-        request: PostClientRequest
-    ): Flow<Result<LoginResponse>> {
-        return serviceable.postClient(endpoint = url, request = request)
-    }
-}
-
-interface AuthenticationServiceable {
-
-    fun postClient(
-        endpoint: String,
-        request: PostClientRequest
-    ): Flow<Result<LoginResponse>>
 }
 
 @Serializable

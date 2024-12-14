@@ -2,9 +2,9 @@ package com.premierdarkcoffee.sales.hermes.root.feature.authentication.data.remo
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import com.premierdarkcoffee.sales.hermes.root.feature.authentication.presentation.viewmodel.AuthenticationServiceable
+import com.premierdarkcoffee.sales.hermes.root.feature.authentication.domain.model.PostClientRequest
+import com.premierdarkcoffee.sales.hermes.root.feature.authentication.domain.serviceable.AuthenticationServiceable
 import com.premierdarkcoffee.sales.hermes.root.feature.authentication.presentation.viewmodel.LoginResponse
-import com.premierdarkcoffee.sales.hermes.root.feature.authentication.presentation.viewmodel.PostClientRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
