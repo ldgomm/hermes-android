@@ -16,6 +16,7 @@ data class Store(
     val returnPolicy: String,
     val refundPolicy: String,
     val brands: List<String>,
+    val createdAt: Long,
     val status: StoreStatus
 ) {
 
@@ -32,6 +33,7 @@ data class Store(
             returnPolicy = returnPolicy,
             refundPolicy = refundPolicy,
             brands = brands,
+            createdAt = createdAt,
             status = status.toStoreStatusDto()
         )
     }
@@ -49,6 +51,7 @@ data class Store(
             returnPolicy = returnPolicy,
             refundPolicy = refundPolicy,
             brands = brands,
+            createdAt = createdAt,
             status = status.toStoreStatusEntity()
         )
     }
