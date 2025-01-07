@@ -7,8 +7,6 @@ package com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.c
 //  Created by José Ruiz on 13/7/24.
 //
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
@@ -16,7 +14,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +29,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.Send
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,18 +48,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.premierdarkcoffee.sales.hermes.R
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.message.MessageEntity
@@ -71,7 +64,6 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.prod
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.chat.ChatMessage
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.Message
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.store.Store
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.chat.titleStyle
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.conversation.component.ClientMessageView
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.conversation.component.StoreMessageView
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.conversation.component.formatDayDate
@@ -92,13 +84,12 @@ fun ConversationView(
     popBackStack: () -> Unit
 ) {
     val context = LocalContext.current
-
     var inputText by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
-    val groupedMessages: List<Pair<Date, List<Message>>> = groupMessagesByDay(messages).toSortedMap().map { (key, value) ->
+    val groupedMessages = groupMessagesByDay(messages).toSortedMap().map { (key, value) ->
         key to value.sortedBy { it.date }
     }
 
@@ -109,114 +100,120 @@ fun ConversationView(
         }
     }
 
-    Scaffold(topBar = {
-        TopAppBar(title = {
-            Text(
-                text = store?.name ?: stringResource(R.string.no_store_name), style = titleStyle
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = store?.name ?: stringResource(R.string.no_store_name),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.back_button_description)
+                        )
+                    }
+                }
             )
-        }, navigationIcon = {
-            IconButton(onClick = { popBackStack() }) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.arrow_back), contentDescription = ""
-                )
-            }
-        })
-    }) { paddingValues ->
-        Column(modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    // Clear focus when tapped outside
-                    focusManager.clearFocus()
-                })
-            }) {
-            // Message list
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures { focusManager.clearFocus() }
+                }
+        ) {
+            // Messages
             Column(
                 modifier = Modifier
-                    .padding(start = 12.dp)
+                    .padding(horizontal = 12.dp)
                     .verticalScroll(scrollState)
                     .weight(1f)
             ) {
                 groupedMessages.forEach { (day, messages) ->
-                    // Display day name in the center
                     Box(
-                        modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = day.time.formatDayDate(context),
-                            fontSize = 12.sp,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
-                                .padding(4.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(Color(0xFF008080).copy(alpha = 0.2f))
+                                .padding(8.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = RoundedCornerShape(4.dp)
+                                )
                                 .padding(horizontal = 12.dp),
                             textAlign = TextAlign.Center
                         )
                     }
 
-                    // Display messages for the current day
                     messages.forEach { message ->
                         if (message.fromClient) {
-                            val productInformation: ProductDto? = Gson().fromJson(
-                                message.product, ProductDto::class.java
-                            )
+                            val productInfo = Gson().fromJson(message.product, ProductDto::class.java)
                             ClientMessageView(
                                 user = user,
                                 store = store,
                                 message = message,
-                                product = productInformation?.toProductInformation(),
+                                product = productInfo?.toProductInformation(),
                                 onProductCardClicked = onProductCardClicked
                             )
                         } else {
-                            StoreMessageView(message = message, markMessageAsReadLaunchedEffect = markMessageAsReadLaunchedEffect)
+                            StoreMessageView(
+                                message = message,
+                                markMessageAsReadLaunchedEffect = markMessageAsReadLaunchedEffect
+                            )
                         }
                     }
                 }
-
             }
 
-            // Input row
+            // Input Row
             Row(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Input field
-                OutlinedTextField(value = inputText,
-                                  onValueChange = { inputText = it },
-                                  modifier = Modifier
-                                      .weight(1f)
-                                      .background(
-                                          Color.Transparent, shape = RoundedCornerShape(8.dp)
-                                      )
-                                      .padding(8.dp),
-                                  placeholder = {
-                                      Text(
-                                          stringResource(id = R.string.type_a_message), color = Color.Gray
-                                      )
-                                  },
-                                  singleLine = true,
-                                  shape = RoundedCornerShape(8.dp),
-                                  keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-                                  keyboardActions = KeyboardActions(onSend = {
-                                      messages.firstOrNull()?.let { value ->
-                                          val message = MessageDto(
-                                              text = inputText, fromClient = true, clientId = value.clientId, storeId = value.storeId
-                                          )
-                                          Log.d(
-                                              TAG, "ConversationView: $message"
-                                          )
-                                          onSendMessageToStoreButtonClicked(message)
-                                          inputText = ""
-                                      }
-                                  })
+                OutlinedTextField(
+                    value = inputText,
+                    onValueChange = { inputText = it },
+                    placeholder = {
+                        Text(
+                            text = stringResource(id = R.string.type_a_message),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp),
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(onSend = {
+                        messages.firstOrNull()?.let { value ->
+                            val message = MessageDto(
+                                text = inputText,
+                                fromClient = true,
+                                clientId = value.clientId,
+                                storeId = value.storeId
+                            )
+                            onSendMessageToStoreButtonClicked(message)
+                            inputText = ""
+                        }
+                    })
                 )
+
                 Spacer(modifier = Modifier.width(4.dp))
 
-                // Send button visibility animation
                 AnimatedVisibility(
                     visible = inputText.isNotEmpty(),
                     enter = expandIn(expandFrom = Alignment.Center) + fadeIn(),
@@ -226,21 +223,21 @@ fun ConversationView(
                         onClick = {
                             messages.firstOrNull()?.let { value ->
                                 val message = MessageDto(
-                                    text = inputText, fromClient = true, clientId = value.clientId, storeId = value.storeId
-                                )
-                                Log.d(
-                                    TAG, "ConversationView: $message"
+                                    text = inputText,
+                                    fromClient = true,
+                                    clientId = value.clientId,
+                                    storeId = value.storeId
                                 )
                                 onSendMessageToStoreButtonClicked(message)
                                 inputText = ""
                             }
-                        }, modifier = Modifier.size(48.dp)
+                        },
+                        modifier = Modifier.size(48.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Sharp.Send,
-                            contentDescription = "Send button",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
+                            imageVector = Icons.Default.Send,
+                            contentDescription = stringResource(R.string.send_button_description),
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -248,6 +245,7 @@ fun ConversationView(
         }
     }
 }
+
 
 val Message.day: Date
     get() {

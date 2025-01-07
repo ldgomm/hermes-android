@@ -1,6 +1,5 @@
 package com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.chat
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -46,14 +45,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.premierdarkcoffee.sales.hermes.R
-import com.premierdarkcoffee.sales.hermes.R.drawable.auto_awesome
-import com.premierdarkcoffee.sales.hermes.R.drawable.person_outline
-import com.premierdarkcoffee.sales.hermes.R.drawable.shopping_cart
-import com.premierdarkcoffee.sales.hermes.R.string.chat_with_chatgpt
-import com.premierdarkcoffee.sales.hermes.R.string.chats
-import com.premierdarkcoffee.sales.hermes.R.string.pinned_chat
-import com.premierdarkcoffee.sales.hermes.R.string.stores_label
-import com.premierdarkcoffee.sales.hermes.R.string.tech_inquiries_and_stock_availability
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.user.User
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.Message
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageStatus
@@ -99,26 +90,26 @@ fun ChatsView(
     val skipPartiallyExpanded by rememberSaveable { mutableStateOf(false) }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
 
-    Scaffold(topBar = {
-        TopAppBar(title = {
-            Text(
-                text = stringResource(id = chats), style = titleStyle
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.chats),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                actions = {
+                    IconButton(onClick = navigateToUserView) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.person_outline),
+                            contentDescription = stringResource(id = R.string.user_profile_icon_description)
+                        )
+                    }
+                }
             )
-        }, modifier = Modifier, actions = {
-//            AnimatedVisibility(cart.isNotEmpty()) {
-//                IconButton(onClick = { openBottomSheet = !openBottomSheet }) {
-//                    Icon(
-//                        imageVector = ImageVector.vectorResource(id = shopping_cart), null
-//                    )
-//                }
-//            }
-            IconButton(onClick = navigateToUserView) {
-                Icon(
-                    ImageVector.vectorResource(person_outline), null
-                )
-            }
-        })
-    }) { paddingValues ->
+        }
+    ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .padding(
@@ -130,12 +121,12 @@ fun ChatsView(
                 .padding(8.dp)
                 .fillMaxSize()
         ) {
-
+            // Pinned Chat Section
             item {
                 Text(
-                    text = stringResource(id = pinned_chat), modifier = Modifier.padding(top = 4.dp), style = TextStyle(
-                        fontSize = 17.sp, fontWeight = FontWeight.Bold, fontStyle = FontStyle.Normal
-                    )
+                    text = stringResource(id = R.string.pinned_chat),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
             item {
@@ -143,28 +134,31 @@ fun ChatsView(
             }
             item {
                 NewChatItemView(
-                    imageRes = auto_awesome,
-                    title = stringResource(id = chat_with_chatgpt),
-                    subtitle = stringResource(id = tech_inquiries_and_stock_availability),
+                    imageRes = R.drawable.auto_awesome,
+                    title = stringResource(id = R.string.chat_with_chatgpt),
+                    subtitle = stringResource(id = R.string.tech_inquiries_and_stock_availability),
                     onNewChatButtonClicked = onNewChatButtonClicked
                 )
             }
 
-            // Spacer for separation
+            // Spacer for Separation
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            // Store chats section title
+
+            // Store Chats Section
             item {
                 Text(
-                    text = stringResource(stores_label), modifier = Modifier.padding(top = 4.dp), style = TextStyle(
-                        fontSize = 17.sp, fontWeight = FontWeight.Bold, fontStyle = FontStyle.Normal
-                    )
+                    text = stringResource(id = R.string.stores_label),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
             item {
                 Spacer(modifier = Modifier.height(4.dp))
             }
+
+            // Store Conversations
             sortedGroupedMessages.forEach { (storeId, storeMessages) ->
                 item {
                     val lastMessage = storeMessages.lastOrNull()
@@ -173,10 +167,14 @@ fun ChatsView(
                             (it.status == MessageStatus.SENT || it.status == MessageStatus.DELIVERED) && !it.fromClient
                         }
                         val store = stores.firstOrNull { it.id == storeId }
-                        ConversationItemView(store = store, message = message, sentOrDeliveredCount = sentOrDeliveredCount,
-                                             onConversationItemViewClicked = {
-                                                 onConversationItemViewClicked(storeId)
-                                             })
+                        ConversationItemView(
+                            store = store,
+                            message = message,
+                            sentOrDeliveredCount = sentOrDeliveredCount,
+                            onConversationItemViewClicked = {
+                                onConversationItemViewClicked(storeId)
+                            }
+                        )
                     }
                 }
             }
@@ -184,28 +182,35 @@ fun ChatsView(
     }
     if (openBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = { openBottomSheet = false }, sheetState = bottomSheetState
+            onDismissRequest = { openBottomSheet = false },
+            sheetState = bottomSheetState
         ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
+                // Empty cart message
                 if (cart.isEmpty()) {
                     item {
                         Text(
-                            text = stringResource(id = R.string.cart_is_empty), style = MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
-                            ), modifier = Modifier
+                            text = stringResource(id = R.string.cart_is_empty),
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            ),
+                            modifier = Modifier
                                 .padding(16.dp)
                                 .background(
-                                    MaterialTheme.colorScheme.surface.copy(alpha = 0.8f), RoundedCornerShape(8.dp)
+                                    MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                                    shape = RoundedCornerShape(8.dp)
                                 )
                                 .padding(8.dp)
                         )
                     }
                 }
 
+                // Products in cart
                 items(cart) { product ->
                     val dismissState = rememberDismissState(confirmStateChange = {
                         if (it == DismissValue.DismissedToStart || it == DismissValue.DismissedToEnd) {
@@ -216,34 +221,44 @@ fun ChatsView(
                         }
                     })
 
-                    SwipeToDismiss(state = dismissState, background = {
-                        val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
-                        val color = when (dismissState.targetValue) {
-                            DismissValue.Default -> MaterialTheme.colorScheme.surface
-                            DismissValue.DismissedToEnd -> Color.Red
-                            DismissValue.DismissedToStart -> Color.Red
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color)
-                                .padding(8.dp),
-                            contentAlignment = if (direction == DismissDirection.StartToEnd) Alignment.CenterStart else Alignment.CenterEnd
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete, contentDescription = null, tint = Color.White
+                    SwipeToDismiss(
+                        state = dismissState,
+                        background = {
+                            val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
+                            val color = when (dismissState.targetValue) {
+                                DismissValue.Default -> MaterialTheme.colorScheme.surface
+                                DismissValue.DismissedToEnd -> Color.Red
+                                DismissValue.DismissedToStart -> Color.Red
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(color)
+                                    .padding(8.dp),
+                                contentAlignment = if (direction == DismissDirection.StartToEnd) Alignment.CenterStart else Alignment.CenterEnd
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = stringResource(id = R.string.delete_product_icon_description),
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        dismissContent = {
+                            val store = stores.firstOrNull { it.id == product.storeId }
+                            ProductItemView(
+                                user = user,
+                                store = store,
+                                product = product,
+                                onProductCardClicked = onProductCardClicked
                             )
                         }
-                    }, dismissContent = {
-                        val store = stores.firstOrNull { it.id == product.storeId }
-                        ProductItemView(
-                            user = user, store = store, product = product, onProductCardClicked
-                        )
-                    })
+                    )
                 }
             }
         }
     }
+
 }
 
 val titleStyle: TextStyle = TextStyle(

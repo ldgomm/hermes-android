@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,15 +32,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.premierdarkcoffee.sales.hermes.R
-import com.premierdarkcoffee.sales.hermes.R.drawable.storefront
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.Message
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.store.Store
 import java.text.SimpleDateFormat
@@ -55,37 +54,47 @@ fun ConversationItemView(
     sentOrDeliveredCount: Int,
     onConversationItemViewClicked: () -> Unit
 ) {
-    Row(modifier = Modifier
-        .padding(vertical = 4.dp)
-        .clickable { onConversationItemViewClicked() }
+    // Localized strings for accessibility
+    val storeImageDescription = stringResource(
+        id = R.string.store_image_description,
+        store?.name ?: stringResource(id = R.string.no_store_name)
+    )
+    val noStoreNameDescription = stringResource(id = R.string.no_store_name)
+    val messageDateDescription = stringResource(id = R.string.message_date_label)
 
-        .fillMaxWidth()
-        .background(
-            Color.LightGray.copy(0.05f), shape = RoundedCornerShape(8.dp)
-        )
-        .padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-
+    Row(
+        modifier = Modifier
+            .padding(vertical = 4.dp)
+            .clickable { onConversationItemViewClicked() }
+            .fillMaxWidth()
+            .background(
+                color = Color.LightGray.copy(alpha = 0.05f),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         // Store icon
         store?.let {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(store.image.url)
-                    .crossfade(true)  // Enables a crossfade animation when the image loads
-                    .diskCachePolicy(CachePolicy.ENABLED) // Enables disk caching
-                    .memoryCachePolicy(CachePolicy.ENABLED) // Enables memory caching
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(store.image.url)
+                    .crossfade(true)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
                     .build(),
-                contentDescription = store.name,
+                contentDescription = storeImageDescription,
                 modifier = Modifier
-                    .size(54.dp) // Increased size for larger image
+                    .size(54.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .fillMaxSize(),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentScale = ContentScale.Crop
             )
         } ?: run {
             Image(
-                painterResource(storefront),
-                "Storefront",
-                Modifier
+                painter = painterResource(id = R.drawable.storefront),
+                contentDescription = noStoreNameDescription,
+                modifier = Modifier
                     .size(54.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -97,36 +106,54 @@ fun ConversationItemView(
 
         // Message content
         Column(modifier = Modifier.weight(1f)) {
+            // Store Name
             Text(
-                text = store?.name ?: stringResource(id = R.string.no_store_name), fontSize = 17.sp, fontWeight = FontWeight.Bold
+                text = store?.name ?: stringResource(id = R.string.no_store_name),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.semantics { contentDescription = store?.name ?: noStoreNameDescription }
             )
+
+            // Message Text
             Text(
-                text = message.text, fontSize = 14.sp, color = Color.Gray, maxLines = 2, overflow = TextOverflow.Ellipsis
+                text = message.text,
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.semantics { contentDescription = message.text }
             )
         }
 
         Spacer(modifier = Modifier.width(10.dp))
-        Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-            // Date text
+
+        // Date and Badge
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Date
             Text(
                 text = message.date.formatShortDate(),
-                fontSize = 16.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(end = 10.dp)
+                style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray),
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .semantics { contentDescription = "$messageDateDescription: ${message.date.formatShortDate()}" }
             )
 
-            // Message count badge
+            // Message Count Badge
             if (sentOrDeliveredCount > 0) {
                 Box(
                     modifier = Modifier
                         .size(24.dp)
-                        .background(Color.DarkGray.copy(0.7f), shape = CircleShape),
+                        .background(
+                            color = Color.DarkGray.copy(alpha = 0.7f),
+                            shape = CircleShape
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "$sentOrDeliveredCount",
-                        fontSize = 10.sp, // Slightly larger text size
-                        color = Color.White
+                        style = MaterialTheme.typography.labelSmall.copy(color = Color.White),
+                        modifier = Modifier.semantics { contentDescription = "$sentOrDeliveredCount messages pending" }
                     )
                 }
             }
