@@ -14,7 +14,7 @@
     <string name="tech_inquiries_and_stock_availability">Responderé a consultas sobre productos tecnológicos y verificaré la disponibilidad del stock</string>
     <string name="stores_label">Tiendas</string>
     <string name="cart_is_empty">El carrito está vacío</string>
-    <string name="type_a_message">Escribe un mensaje...</string>
+    <string name="type_a_message">Escribe un mensaje…</string>
     <string name="product_by_store">%1$s por %2$s</string>
     <string name="in_stock">En stock</string>
     <string name="product_quantity">%1$d productos</string>
@@ -42,7 +42,7 @@
     <string name="greet">Hola</string>
     <string name="view_store_on_map">Ver tienda en el mapa</string>
     <string name="view_stores_on_map">Ver tiendas en el mapa</string>
-    <string name="you_are_here">Tú estás aquí</string>
+    <string name="you_are_here">Estás aquí</string>
     <string name="search_radius">Tú búsqueda se realizará en un radio de %1$d km</string>
     <string name="change_my_location">Cambiar mi ubicación</string>
     <string name="searching_within_distance">Buscando en %1$d km</string>
@@ -106,6 +106,47 @@
     <string name="finished_label">Acabado:</string>
     <string name="in_box_label">En la caja:</string>
     <string name="warranty_duration_label">Por %1$d meses:</string>
+
+    <string name="store_image_description">Imagen de %1$s</string>
+    <string name="storefront_image_description">Imagen de marcador de posición de la tienda</string>
+
+    <string name="chat_image_description">Imagen de perfil del chat</string>
+    <string name="verified_icon_description">Ícono de cuenta verificada</string>
+
+    <string name="user_profile_icon_description">Icono de perfil de usuario</string>
+    <string name="delete_product_icon_description">Eliminar producto</string>
+
+    <string name="text_message_label">Mensaje de texto</string>
+    <string name="image_message_label">Mensaje de imagen</string>
+    <string name="video_message_label">Mensaje de video</string>
+    <string name="audio_message_label">Mensaje de audio</string>
+    <string name="file_message_label">Mensaje de archivo</string>
+    <string name="message_date_label">Fecha del mensaje</string>
+
+    <string name="back_button_description">Regresar</string>
+    <string name="send_button_description">Enviar mensaje</string>
+
+    <string name="offer_label">Oferta</string>
+    <string name="distance_label">Distancia</string>
+    <string name="discount_label">Descuento</string>
+    <string name="current_price_label">Precio Actual</string>
+    <string name="original_price_label">Precio Original</string>
+
+    <plurals name="view_stores_on_map">
+        <item quantity="one">Ver %d Tienda en el Mapa</item>
+        <item quantity="other">Ver %d Tiendas en el Mapa</item>
+    </plurals>
+
+    <string name="your_current_location">Tu ubicación actual</string>
+    <string name="store_location">Ubicación de la tienda</string>
+    <string name="current_location_marker">Tu ubicación actual</string>
+
+    <string name="save">Guardar</string>
+    <string name="change_location_title">Cambiar el lugar de búsqueda</string>
+    <string name="change_location_confirmation">¿Está seguro que desea cambiar su ubicación?</string>
+
+    <string name="map_location_description">Mapa que muestra la ubicación de usuario</string>
+    <string name="back">Atrás</string>
 
 
 </resources>

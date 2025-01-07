@@ -8,14 +8,13 @@
     <string name="sign_in_anonymously">Sign in anonymously</string>
     <string name="privacy_with_you_always">Privacy with you always</string>
 
-
     <string name="no_store_name">No name</string>
     <string name="pinned_chat">Pinned chat</string>
     <string name="chat_with_chatgpt">Chat with ChatGPT</string>
     <string name="tech_inquiries_and_stock_availability">I will respond to technology product inquiries and check stock availability</string>
     <string name="stores_label">Stores</string>
     <string name="cart_is_empty">The cart is empty</string>
-    <string name="type_a_message">Type a message...</string>
+    <string name="type_a_message">Type a message…</string>
     <string name="product_by_store">%1$s by %2$s</string>
     <string name="in_stock">In stock</string>
     <string name="product_quantity">%1$d products</string>
@@ -39,7 +38,7 @@
     <string name="no">No</string>
     <string name="request_product_from_store">Request %1$s from %2$s</string>
     <string name="confirm_request_product">Are you sure you want to request this product?</string>
-    <string name="message_to_store">me interesa este producto</string>
+    <string name="message_to_store">I am interested in this product</string>
     <string name="greet">Hi</string>
     <string name="view_store_on_map">View store on the map</string>
     <string name="view_stores_on_map">View stores on the map</string>
@@ -107,6 +106,47 @@
     <string name="finished_label">Finished:</string>
     <string name="in_box_label">In Box:</string>
     <string name="warranty_duration_label">For %1$d months:</string>
+
+    <string name="store_image_description">Image of %1$s</string>
+    <string name="storefront_image_description">Storefront placeholder image</string>
+
+    <string name="chat_image_description">Chat profile image</string>
+    <string name="verified_icon_description">Verified account icon</string>
+
+    <string name="user_profile_icon_description">User profile icon</string>
+    <string name="delete_product_icon_description">Delete product</string>
+
+    <string name="text_message_label">Text message</string>
+    <string name="image_message_label">Image message</string>
+    <string name="video_message_label">Video message</string>
+    <string name="audio_message_label">Audio message</string>
+    <string name="file_message_label">File message</string>
+    <string name="message_date_label">Message date</string>
+
+    <string name="back_button_description">Go back</string>
+    <string name="send_button_description">Send message</string>
+
+    <string name="offer_label">Offer</string>
+    <string name="distance_label">Distance</string>
+    <string name="discount_label">Discount</string>
+    <string name="current_price_label">Current Price</string>
+    <string name="original_price_label">Original Price</string>
+
+    <plurals name="view_stores_on_map">
+        <item quantity="one">View %d Store on Map</item>
+        <item quantity="other">View %d Stores on Map</item>
+    </plurals>
+
+    <string name="your_current_location">Your current location</string>
+    <string name="store_location">Store location</string>
+    <string name="current_location_marker">Your current location</string>
+
+    <string name="save">Save</string>
+    <string name="change_location_title">Change Search Location</string>
+    <string name="change_location_confirmation">Are you sure you want to change your location?</string>
+
+    <string name="map_location_description">Map showing the location for user</string>
+    <string name="back">Back</string>
 
 
 </resources>
