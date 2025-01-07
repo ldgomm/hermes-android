@@ -65,23 +65,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.premierdarkcoffee.sales.hermes.R
 import com.premierdarkcoffee.sales.hermes.R.drawable.arrow_back
 import com.premierdarkcoffee.sales.hermes.R.drawable.delete_outline
 import com.premierdarkcoffee.sales.hermes.R.drawable.map
 import com.premierdarkcoffee.sales.hermes.R.string.ask_anything
-import com.premierdarkcoffee.sales.hermes.R.string.cancel
 import com.premierdarkcoffee.sales.hermes.R.string.delete_messages
-import com.premierdarkcoffee.sales.hermes.R.string.distance_advice_description
-import com.premierdarkcoffee.sales.hermes.R.string.distance_advice_title
-import com.premierdarkcoffee.sales.hermes.R.string.do_not_show_again
 import com.premierdarkcoffee.sales.hermes.R.string.more_options
 import com.premierdarkcoffee.sales.hermes.R.string.search_within_distance
 import com.premierdarkcoffee.sales.hermes.R.string.searching_within_distance
 import com.premierdarkcoffee.sales.hermes.R.string.send_button
-import com.premierdarkcoffee.sales.hermes.R.string.understood
 import com.premierdarkcoffee.sales.hermes.R.string.waiting_for_response
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.user.User
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.chat.ChatMessage
@@ -189,12 +187,14 @@ fun SearchView(
                     focusManager.clearFocus()
                 })
             }) {
+
             LazyColumn(
                 state = listState, modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
                     .padding(8.dp), verticalArrangement = Arrangement.Bottom
             ) {
+                // Empty state with search phrases
                 item {
                     if (chatMessages.isEmpty()) {
                         SearchPhrasesList { searchPhrase ->
@@ -208,27 +208,31 @@ fun SearchView(
                     }
                 }
 
+                // Spacer
                 item { Spacer(modifier = Modifier.height(12.dp)) }
 
+                // Grouped messages by day
                 groupedMessages.forEach { (day, messages) ->
-                    // Display day name in the center
+                    // Day header
                     item {
                         Box(
                             modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = day.time.formatDayDate(context),
-                                fontSize = 12.sp,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier
                                     .padding(4.dp)
                                     .clip(RoundedCornerShape(4.dp))
-                                    .background(Color(0xFF008080).copy(alpha = 0.2f))
+                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
                                     .padding(horizontal = 12.dp),
                                 textAlign = TextAlign.Center
                             )
                         }
                     }
 
+                    // Messages for the day
                     items(messages) { message ->
                         if (message.isUser) {
                             UserMessageView(message)
@@ -237,75 +241,78 @@ fun SearchView(
                             val optionalProductsAvailable = !message.optionalProducts.isNullOrEmpty()
                             val secondMessageAvailable = !message.secondMessage.isNullOrEmpty()
 
-                            if (productsAvailable && optionalProductsAvailable && secondMessageAvailable) {
-                                // Case 1: Both products and optionalProducts are not empty
-                                // Display secondMessage with optionalProducts
-                                ServerMessageView(
-                                    stores = stores,
-                                    user = user,
-                                    message = message.secondMessage!!,
-                                    products = message.optionalProducts!!,
-                                    date = message.date,
-                                    onProductCardClicked = onProductCardClicked,
-                                    onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                )
+                            when {
+                                productsAvailable && optionalProductsAvailable && secondMessageAvailable -> {
+                                    // Case 1: Both products and optionalProducts are available
+                                    ServerMessageView(
+                                        stores = stores,
+                                        user = user,
+                                        message = message.secondMessage!!,
+                                        products = message.optionalProducts!!,
+                                        date = message.date,
+                                        onProductCardClicked = onProductCardClicked,
+                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
+                                    )
+                                    ServerMessageView(
+                                        stores = stores,
+                                        user = user,
+                                        message = message.firstMessage,
+                                        products = message.products!!,
+                                        date = message.date,
+                                        onProductCardClicked = onProductCardClicked,
+                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
+                                    )
+                                }
 
-                                // Display firstMessage with products
-                                ServerMessageView(
-                                    stores = stores,
-                                    user = user,
-                                    message = message.firstMessage,
-                                    products = message.products!!,
-                                    date = message.date,
-                                    onProductCardClicked = onProductCardClicked,
-                                    onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                )
-                            } else if (productsAvailable) {
-                                // Case 2: Only products are available
-                                // Display firstMessage with products
-                                ServerMessageView(
-                                    stores = stores,
-                                    user = user,
-                                    message = message.firstMessage,
-                                    products = message.products!!,
-                                    date = message.date,
-                                    onProductCardClicked = onProductCardClicked,
-                                    onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                )
-                            } else if (optionalProductsAvailable && secondMessageAvailable) {
-                                // Case 3: Only optionalProducts are available
-                                // Do not display firstMessage
-                                // Display secondMessage with optionalProducts
-                                ServerMessageView(
-                                    stores = stores,
-                                    user = user,
-                                    message = message.secondMessage!!,
-                                    products = message.optionalProducts!!,
-                                    date = message.date,
-                                    onProductCardClicked = onProductCardClicked,
-                                    onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                )
-                            } else {
-                                // Case 4: Neither products nor optionalProducts are available
-                                // Display firstMessage only (no products)
-                                ServerMessageView(
-                                    stores = stores,
-                                    user = user,
-                                    message = message.firstMessage,
-                                    products = emptyList(), // No products to display
-                                    date = message.date,
-                                    onProductCardClicked = onProductCardClicked,
-                                    onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                )
+                                productsAvailable -> {
+                                    // Case 2: Only products are available
+                                    ServerMessageView(
+                                        stores = stores,
+                                        user = user,
+                                        message = message.firstMessage,
+                                        products = message.products!!,
+                                        date = message.date,
+                                        onProductCardClicked = onProductCardClicked,
+                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
+                                    )
+                                }
+
+                                optionalProductsAvailable && secondMessageAvailable -> {
+                                    // Case 3: Only optionalProducts are available
+                                    ServerMessageView(
+                                        stores = stores,
+                                        user = user,
+                                        message = message.secondMessage!!,
+                                        products = message.optionalProducts!!,
+                                        date = message.date,
+                                        onProductCardClicked = onProductCardClicked,
+                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
+                                    )
+                                }
+
+                                else -> {
+                                    // Case 4: Neither products nor optionalProducts are available
+                                    ServerMessageView(
+                                        stores = stores,
+                                        user = user,
+                                        message = message.firstMessage,
+                                        products = emptyList(),
+                                        date = message.date,
+                                        onProductCardClicked = onProductCardClicked,
+                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
+                                    )
+                                }
                             }
                         }
                     }
-
                 }
+
+                // Typing indicator
                 if (isTyping) {
                     item { TypingIndicatorView() }
                 }
             }
+
 
             Row(
                 modifier = Modifier
@@ -361,17 +368,31 @@ fun SearchView(
         }
     }
 
+    val distanceAdviceTitle = stringResource(id = R.string.distance_advice_title)
+    val doNotShowAgain = stringResource(id = R.string.do_not_show_again)
+
     if (!doNotShowAgainDistanceAlert && showDistanceAdviceDialog) {
-        AlertDialog(onDismissRequest = { showDistanceAdviceDialog = false }, title = { Text(stringResource(id = distance_advice_title)) }, text = {
+        AlertDialog(onDismissRequest = { showDistanceAdviceDialog = false }, title = {
+            Text(text = stringResource(id = R.string.distance_advice_title),
+                 style = MaterialTheme.typography.titleMedium,
+                 modifier = Modifier.semantics { contentDescription = distanceAdviceTitle })
+        }, text = {
             Column {
-                Text(stringResource(id = distance_advice_description))
-                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(id = R.string.distance_advice_description),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = doNotShowAgainChecked, onCheckedChange = { checked ->
                         doNotShowAgainChecked = checked
                         SharedPreferencesHelper.setDoNotShowAgainDistanceAlert(context, checked)
-                    })
-                    Text(stringResource(id = do_not_show_again))
+                    }, modifier = Modifier.semantics { contentDescription = doNotShowAgain })
+                    Text(
+                        text = stringResource(id = R.string.do_not_show_again),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
                 }
             }
         }, confirmButton = {
@@ -379,14 +400,19 @@ fun SearchView(
                 showDistanceAdviceDialog = false
                 openBottomSheet = true
             }) {
-                Text(stringResource(id = understood))
+                Text(
+                    text = stringResource(id = R.string.understood), style = MaterialTheme.typography.bodyMedium
+                )
             }
         }, dismissButton = {
             Button(onClick = { showDistanceAdviceDialog = false }) {
-                Text(stringResource(id = cancel))
+                Text(
+                    text = stringResource(id = R.string.cancel), style = MaterialTheme.typography.bodyMedium
+                )
             }
         })
     }
+
 
     if (openBottomSheet) {
         ModalBottomSheet(onDismissRequest = { openBottomSheet = false }, sheetState = bottomSheetState) {
@@ -408,7 +434,6 @@ data class SearchPhrase(
 
 @Composable
 fun SearchPhrasesList(onPhraseClick: (SearchPhrase) -> Unit) {
-
     val searchPhrases = listOf(
         SearchPhrase(icon = ImageVector.vectorResource(map), text = "I need a new MacBook Pro"),
         SearchPhrase(icon = ImageVector.vectorResource(map), text = "What are the latest iPads?"),
@@ -421,26 +446,37 @@ fun SearchPhrasesList(onPhraseClick: (SearchPhrase) -> Unit) {
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             searchPhrases.forEach { phrase ->
-                Column(modifier = Modifier
-                    .padding(8.dp)
-                    .width(180.dp)
-                    .clip(RoundedCornerShape(15.dp))
-                    .border(
-                        width = 1.dp, color = Color.Gray.copy(alpha = 0.5f), shape = RoundedCornerShape(15.dp)
-                    )
-                    .clickable { onPhraseClick(phrase) }
-                    .padding(16.dp),
-                       horizontalAlignment = Alignment.Start,
-                       verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(
+                    modifier = Modifier
+                        .width(180.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .border(
+                            width = 1.dp,
+                            color = Color.Gray.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(15.dp)
+                        )
+                        .clickable { onPhraseClick(phrase) }
+                        .padding(16.dp)
+                        .semantics { contentDescription = phrase.text },
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Image(
-                        imageVector = phrase.icon, contentDescription = phrase.text, modifier = Modifier.size(32.dp), contentScale = ContentScale.Fit
+                        imageVector = phrase.icon,
+                        contentDescription = phrase.text,
+                        modifier = Modifier.size(32.dp),
+                        contentScale = ContentScale.Fit
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = phrase.text, style = MaterialTheme.typography.bodySmall, fontSize = 14.sp, maxLines = 3, textAlign = TextAlign.Start
+                        text = phrase.text,
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Start
                     )
                 }
             }

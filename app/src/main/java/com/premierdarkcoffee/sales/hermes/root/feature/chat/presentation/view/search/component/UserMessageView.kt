@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,19 +42,20 @@ fun UserMessageView(message: ChatMessage) {
             .fillMaxWidth()
             .padding(end = 8.dp)
             .wrapContentWidth(Alignment.End),
-        horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
         Column(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.End,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
+            // Message Text
             Text(
                 text = message.firstMessage,
-                fontSize = 16.sp,
+                style = MaterialTheme.typography.bodyLarge,
                 color = Color.White,
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
@@ -61,17 +64,18 @@ fun UserMessageView(message: ChatMessage) {
                             if (isSystemInDarkTheme()) 0.2f else 0.9f
                         )
                     )
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .semantics { contentDescription = message.firstMessage },
                 textAlign = TextAlign.Center
             )
 
+            // Message Date
             Text(
                 text = message.date.formatMessageDate(LocalContext.current),
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.align(Alignment.End)
             )
         }
-
     }
 }

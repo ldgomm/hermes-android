@@ -27,17 +27,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.premierdarkcoffee.sales.hermes.R
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.message.MessageEntity
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.Message
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageStatus
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType.AUDIO
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType.FILE
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType.IMAGE
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType.VIDEO
 
 @Composable
 fun StoreMessageView(
@@ -45,6 +44,13 @@ fun StoreMessageView(
     markMessageAsReadLaunchedEffect: (MessageEntity) -> Unit
 ) {
     val context = LocalContext.current
+
+    // Localized strings for message types
+    val textMessageLabel = stringResource(id = R.string.text_message_label)
+    val imageMessageLabel = stringResource(id = R.string.image_message_label)
+    val videoMessageLabel = stringResource(id = R.string.video_message_label)
+    val audioMessageLabel = stringResource(id = R.string.audio_message_label)
+    val fileMessageLabel = stringResource(id = R.string.file_message_label)
 
     LaunchedEffect(message.status != MessageStatus.READ) {
         if (message.status != MessageStatus.READ) {
@@ -63,7 +69,6 @@ fun StoreMessageView(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Column(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                     horizontalAlignment = Alignment.Start,
@@ -71,38 +76,62 @@ fun StoreMessageView(
                         .fillMaxWidth()
                         .wrapContentHeight()
                 ) {
+                    // Message text with accessibility
                     Text(
                         text = message.text,
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
                             .background(Color.Gray.copy(alpha = 0.2f))
-                            .padding(8.dp),
+                            .padding(8.dp)
+                            .semantics { contentDescription = "$textMessageLabel: ${message.text}" },
                         textAlign = TextAlign.Start
                     )
 
+                    // Message date with accessibility
                     Text(
-                        text = message.date.formatMessageDate(context), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        text = message.date.formatMessageDate(context),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        modifier = Modifier.semantics {
+                            contentDescription = message.date.formatMessageDate(context)
+                        }
                     )
                 }
                 Spacer(modifier = Modifier.width(60.dp))
             }
         }
 
-        IMAGE -> {
-            Text("Image")
+        MessageType.IMAGE -> {
+            Text(
+                text = imageMessageLabel,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.semantics { contentDescription = imageMessageLabel }
+            )
         }
 
-        VIDEO -> {
-            Text("Video")
+        MessageType.VIDEO -> {
+            Text(
+                text = videoMessageLabel,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.semantics { contentDescription = videoMessageLabel }
+            )
         }
 
-        AUDIO -> {
-            Text("Audio")
+        MessageType.AUDIO -> {
+            Text(
+                text = audioMessageLabel,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.semantics { contentDescription = audioMessageLabel }
+            )
         }
 
-        FILE -> {
-            Text("File")
+        MessageType.FILE -> {
+            Text(
+                text = fileMessageLabel,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.semantics { contentDescription = fileMessageLabel }
+            )
         }
     }
 }

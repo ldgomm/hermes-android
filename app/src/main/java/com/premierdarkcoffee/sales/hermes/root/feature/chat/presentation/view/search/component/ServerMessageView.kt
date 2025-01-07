@@ -36,10 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.premierdarkcoffee.sales.hermes.R
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.user.User
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.product.Product
@@ -86,18 +86,22 @@ fun ServerMessageView(
                     .fillMaxWidth()
                     .wrapContentHeight()
             ) {
+                // Message Text
                 Text(
                     text = message,
-                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .clip(RoundedCornerShape(11.dp))
                         .background(Color.Gray.copy(alpha = 0.2f))
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .semantics { contentDescription = message },
                     textAlign = TextAlign.Start
                 )
+
+                // Date
                 Text(
                     text = date.formatMessageDate(LocalContext.current),
-                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
             }
@@ -118,54 +122,43 @@ fun ServerMessageView(
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                        products?.forEach { product ->
-                            Box(modifier = Modifier.padding(end = 4.dp)) {
+                    products?.forEach { product ->
+                        Box(modifier = Modifier.padding(end = 4.dp)) {
                             val store: Store? = stores.firstOrNull { it.id == product.storeId }
                             ProductItemView(user = user, store = store, product = product, onProductCardClicked)
                         }
                     }
                 }
-//                val configuration = LocalConfiguration.current
-//                val screenWidth = configuration.screenWidthDp.dp
-//
-//                LazyRow(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.Start,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    items(products ?: emptyList()) { product ->
-//                        val store: Store? = stores.firstOrNull { it.id == product.storeId }
-//                        Box(
-//                            modifier = Modifier
-//                                .width(screenWidth * 0.9f).height(150.dp)
-//                                .padding(end = 8.dp)
-//                        ) {
-//                            ProductItemView(
-//                                user = user, store = store, product = product, onProductCardClicked = onProductCardClicked
-//                            )
-//                        }
-//                    }
-//                }
 
-                if (products?.isNotEmpty() == true) {
-                    Text(text = stringResource(id = if (products.count() == 1) R.string.view_store_on_map else R.string.view_stores_on_map),
-                         modifier = Modifier
-                             .clickable { openBottomSheet = true }
-                             .fillMaxWidth(1f)
-                             .wrapContentWidth(Alignment.CenterHorizontally)
-                             .padding(vertical = 4.dp)
-                             .background(Color.Gray.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
-                             .padding(2.dp)
-                             .padding(horizontal = 10.dp),
-                         color = MaterialTheme.colorScheme.primary,
-                         fontSize = 12.sp)
+                // View Stores Button
+                if (!products.isNullOrEmpty()) {
+                    Text(
+                        text = LocalContext.current.resources.getQuantityString(
+                            if (products.count() == 1) R.string.view_store_on_map else R.plurals.view_stores_on_map,
+                            products.size,
+                            products.size
+                        ),
+                        modifier = Modifier
+                            .clickable { openBottomSheet = true }
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                            .padding(vertical = 4.dp)
+                            .background(Color.Gray.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
+                            .padding(4.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
         }
     }
 
+    // Modal Bottom Sheet for Store Map View
     if (openBottomSheet) {
-        ModalBottomSheet(onDismissRequest = { openBottomSheet = false }, sheetState = bottomSheetState) {
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet = false },
+            sheetState = bottomSheetState
+        ) {
             StoresMapView(user = user, stores = matchedStores, onNavigateToStoreMarkerClicked)
         }
     }

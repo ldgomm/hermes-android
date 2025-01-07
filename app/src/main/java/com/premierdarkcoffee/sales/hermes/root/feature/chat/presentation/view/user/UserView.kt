@@ -7,6 +7,7 @@ package com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.u
 //  Created by José Ruiz on 26/8/24.
 //
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,12 +29,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.premierdarkcoffee.sales.hermes.R
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.user.User
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.chat.titleStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,31 +44,52 @@ fun UserView(
     popBackStack: () -> Unit,
     onEditUserButtonClicked: () -> Unit
 ) {
-    Scaffold(topBar = {
-        TopAppBar(title = {
-            Text(user.name, style = titleStyle)
-        }, navigationIcon = {
-            IconButton(popBackStack) {
-                Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back), null)
-            }
-        }, actions = {
-            Button(onEditUserButtonClicked) { Text(stringResource(R.string.edit)) }
-        })
-    }) { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = user.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.semantics { contentDescription = user.name }
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = popBackStack) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
+                            contentDescription = stringResource(R.string.back)
+                        )
+                    }
+                },
+                actions = {
+                    Button(onClick = onEditUserButtonClicked) {
+                        Text(stringResource(R.string.edit))
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp), modifier = Modifier
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxWidth()
         ) {
 
             // Location Section
+            val mapLocationDescription = stringResource(R.string.map_location_description)
             Section {
                 val location = LatLng(user.location.coordinates[1], user.location.coordinates[0])
                 SimpleMapView(
-                    location = location, modifier = Modifier
+                    location = location,
+                    modifier = Modifier
                         .height(300.dp)
                         .clip(RoundedCornerShape(11.dp))
                         .padding(8.dp)
+                        .semantics {
+                            contentDescription = (mapLocationDescription)
+                        }
                 )
             }
 
@@ -88,6 +111,9 @@ fun Section(content: @Composable () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(16.dp)
     ) {
         content()
     }

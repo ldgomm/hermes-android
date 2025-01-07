@@ -8,7 +8,7 @@ package com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.s
 //
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -51,52 +51,80 @@ fun StoresMapView(
 ) {
     var isMapLoaded by remember { mutableStateOf(false) }
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(user.location.coordinates[1], user.location.coordinates[0]), 10f)
+        position = CameraPosition.fromLatLngZoom(
+            LatLng(user.location.coordinates[1], user.location.coordinates[0]), 10f
+        )
     }
 
     val context = LocalContext.current
     val distance = SharedPreferencesHelper.getDistance(context)
 
-    Column(modifier = Modifier, verticalArrangement = Arrangement.Bottom, horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.fillMaxSize()) {
+    // Main Container
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Google Map
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
-                onMapLoaded = { isMapLoaded = true }) {
+                onMapLoaded = { isMapLoaded = true }
+            ) {
+                // User Location Marker
                 val userLocation = LatLng(user.location.coordinates[1], user.location.coordinates[0])
                 Marker(
                     state = MarkerState(userLocation),
                     title = stringResource(id = R.string.you_are_here),
-                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE),
+                    snippet = stringResource(id = R.string.your_current_location),
+                    onInfoWindowClick = {}
                 )
+
+                // Store Markers
                 stores.forEach { store ->
-                    val storeLocation = LatLng(store.address.location.coordinates[1], store.address.location.coordinates[0])
-                    Marker(state = MarkerState(storeLocation),
-                           title = store.name,
-                           icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
-                           onInfoWindowClick = {
-                               onNavigateToStoreMarkerClicked(Gson().toJson(store))
-                           })
+                    val storeLocation = LatLng(
+                        store.address.location.coordinates[1],
+                        store.address.location.coordinates[0]
+                    )
+                    Marker(
+                        state = MarkerState(storeLocation),
+                        title = store.name,
+                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
+                        snippet = stringResource(id = R.string.store_location),
+                        onInfoWindowClick = {
+                            onNavigateToStoreMarkerClicked(Gson().toJson(store))
+                        }
+                    )
                 }
             }
+
+            // Loading Indicator
             if (!isMapLoaded) {
                 this@Column.AnimatedVisibility(
-                    visible = !isMapLoaded, modifier = Modifier.matchParentSize(), enter = EnterTransition.None, exit = fadeOut()
+                    visible = !isMapLoaded,
+                    modifier = Modifier.matchParentSize(),
+                    enter = fadeIn(),
+                    exit = fadeOut()
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .wrapContentSize()
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+                            .wrapContentSize(Alignment.Center),
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
         }
     }
 
+    // Camera Animation
     LaunchedEffect(key1 = user.location, key2 = distance) {
         cameraPositionState.animate(
             CameraUpdateFactory.newLatLngZoom(
-                LatLng(user.location.coordinates[1], user.location.coordinates[0]), getZoomLevel(distance)
+                LatLng(user.location.coordinates[1], user.location.coordinates[0]),
+                getZoomLevel(distance)
             ), 1000
         )
     }
