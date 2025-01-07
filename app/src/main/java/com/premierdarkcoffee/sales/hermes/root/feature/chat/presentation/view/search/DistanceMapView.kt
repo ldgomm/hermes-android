@@ -8,7 +8,7 @@ package com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.s
 //
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +35,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -60,14 +62,20 @@ fun DistanceMapView(
 ) {
     var isMapLoaded by remember { mutableStateOf(false) }
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(userLocation.coordinates[1], userLocation.coordinates[0]), 10f)
+        position = CameraPosition.fromLatLngZoom(
+            LatLng(userLocation.coordinates[1], userLocation.coordinates[0]), 10f
+        )
     }
 
     val formattedDistance = remember(distance) {
         NumberFormat.getNumberInstance(Locale.US).format(distance)
     }
 
-    Column(verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Search Radius Text
         Text(
             text = stringResource(id = R.string.search_radius, distance),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
@@ -75,10 +83,13 @@ fun DistanceMapView(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 8.dp)
+                .semantics { contentDescription = "$distance km search radius" }
         )
 
+        // Change Location Button
         OutlinedButton(
-            onClick = onNavigateToUserViewButtonClicked, modifier = Modifier
+            onClick = onNavigateToUserViewButtonClicked,
+            modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(vertical = 8.dp)
         ) {
@@ -89,55 +100,94 @@ fun DistanceMapView(
             )
         }
 
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, onMapLoaded = { isMapLoaded = true }) {
+        // Map Box with Loading Indicator
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            // Google Map
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState,
+                onMapLoaded = { isMapLoaded = true }
+            ) {
+                // User Location Marker
                 val location = LatLng(userLocation.coordinates[1], userLocation.coordinates[0])
-                Marker(state = MarkerState(location), title = stringResource(id = R.string.you_are_here))
+                Marker(
+                    state = MarkerState(location),
+                    title = stringResource(id = R.string.you_are_here),
+                    snippet = stringResource(id = R.string.current_location_marker),
+                    onInfoWindowClick = {}
+                )
+                // Radius Circle
                 Circle(
-                    center = location, radius = (distance * 1000).toDouble(), // Convert km to meters
-                    strokeColor = Color.Blue, strokeWidth = 2f, fillColor = Color.Blue.copy(alpha = 0.1f)
+                    center = location,
+                    radius = (distance * 1000).toDouble(), // Convert km to meters
+                    strokeColor = Color.Blue,
+                    strokeWidth = 2f,
+                    fillColor = Color.Blue.copy(alpha = 0.1f)
                 )
             }
+
+            // Loading Indicator
             if (!isMapLoaded) {
                 this@Column.AnimatedVisibility(
-                    visible = !isMapLoaded, modifier = Modifier.matchParentSize(), enter = EnterTransition.None, exit = fadeOut()
+                    visible = !isMapLoaded,
+                    modifier = Modifier.matchParentSize(),
+                    enter = fadeIn(),
+                    exit = fadeOut()
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .wrapContentSize()
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+                            .wrapContentSize(Alignment.Center),
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
 
+            // Distance Controls
             Row(
                 modifier = Modifier
                     .padding(16.dp)
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f), RoundedCornerShape(8.dp))
+                    .background(
+                        MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                        RoundedCornerShape(8.dp)
+                    )
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Decrement Button
                 Button(
                     onClick = {
                         val decrement = if (distance in 1..10) 1 else 10
                         onDistanceChange(distance - decrement)
-                    }, enabled = distance > 1, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    },
+                    enabled = distance > 1,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(if (distance in 1..10) "-1 km" else "-10 km")
                 }
 
+                // Current Distance Display
                 Text(
-                    text = "$formattedDistance km", style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold
-                    ), modifier = Modifier.padding(8.dp)
+                    text = "$formattedDistance km",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.padding(8.dp)
                 )
 
+                // Increment Button
                 Button(
                     onClick = {
                         val increment = if (distance in 1..10) 1 else 10
                         onDistanceChange(distance + increment)
-                    }, enabled = distance < 500, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    },
+                    enabled = distance < 500,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(if (distance in 1..10) "+1 km" else "+10 km")
                 }
@@ -145,10 +195,12 @@ fun DistanceMapView(
         }
     }
 
+    // Camera Animation
     LaunchedEffect(key1 = userLocation, key2 = distance) {
         cameraPositionState.animate(
             CameraUpdateFactory.newLatLngZoom(
-                LatLng(userLocation.coordinates[1], userLocation.coordinates[0]), getZoomLevel(distance)
+                LatLng(userLocation.coordinates[1], userLocation.coordinates[0]),
+                getZoomLevel(distance)
             ), 1000
         )
     }

@@ -44,6 +44,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -238,12 +240,13 @@ fun ProductView(
                         overviewList.forEach { info ->
                             ElevatedCard(
                                 modifier = Modifier
-                                    .width(300.dp) // Set a fixed width for each card to make them more consistent in size
+                                    .width(300.dp)
                                     .padding(end = 16.dp),
                                 shape = MaterialTheme.shapes.medium,
                                 elevation = CardDefaults.elevatedCardElevation(4.dp)
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
+                                    // Image with accessibility support
                                     AsyncImage(
                                         model = info.image.url,
                                         contentDescription = info.title,
@@ -251,25 +254,28 @@ fun ProductView(
                                             .fillMaxWidth()
                                             .height(180.dp)
                                             .clip(MaterialTheme.shapes.medium)
-                                            .padding(bottom = 8.dp), // Reduced padding for better content alignment
+                                            .padding(bottom = 8.dp),
                                         contentScale = ContentScale.Crop
                                     )
+                                    // Title
                                     Text(
                                         text = info.title,
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(bottom = 4.dp) // Reduced padding for a more compact look
+                                        modifier = Modifier.padding(bottom = 4.dp)
                                     )
+                                    // Subtitle
                                     Text(
                                         text = info.subtitle,
                                         style = MaterialTheme.typography.bodyMedium,
-                                        modifier = Modifier.padding(bottom = 4.dp) // Reduced padding for a more compact look
+                                        modifier = Modifier.padding(bottom = 4.dp)
                                     )
+                                    // Description
                                     Text(
                                         text = info.description,
                                         style = MaterialTheme.typography.bodySmall,
-                                        maxLines = 10, // Limited lines to make the card more compact
-                                        overflow = TextOverflow.Ellipsis // Handle overflow with ellipsis
+                                        maxLines = 10,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 }
                             }
@@ -278,39 +284,49 @@ fun ProductView(
                 }
             }
 
+
             SectionView(title = stringResource(id = R.string.details_label)) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     ProductDetailRow(
                         label = stringResource(id = R.string.price_label),
                         value = "${product.price.amount} ${product.price.currency}"
                     )
                     ProductDetailRow(
-                        label = stringResource(id = R.string.stock_label), value = "${product.stock}"
+                        label = stringResource(id = R.string.stock_label),
+                        value = product.stock.toString()
                     )
                     ProductDetailRow(
-                        label = stringResource(id = R.string.origin_label), value = product.origin
+                        label = stringResource(id = R.string.origin_label),
+                        value = product.origin
                     )
                 }
             }
 
+
+
             product.specifications?.let { specifications ->
                 SectionView(title = stringResource(id = R.string.specifications_label)) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         ProductDetailRow(
-                            label = stringResource(id = R.string.colours_label), value = specifications.colours.joinToString(", ")
+                            label = stringResource(id = R.string.colours_label),
+                            value = specifications.colours.joinToString(", ")
                         )
                         specifications.finished?.let { finished ->
                             ProductDetailRow(
-                                label = stringResource(id = R.string.finished_label), value = finished
+                                label = stringResource(id = R.string.finished_label),
+                                value = finished
                             )
                         }
                         specifications.inBox?.let { inBox ->
                             ProductDetailRow(
-                                label = stringResource(id = R.string.in_box_label), value = inBox.joinToString(", ")
+                                label = stringResource(id = R.string.in_box_label),
+                                value = inBox.joinToString(", ")
                             )
                         }
                         specifications.size?.let { size ->
@@ -321,7 +337,8 @@ fun ProductView(
                         }
                         specifications.weight?.let { weight ->
                             ProductDetailRow(
-                                label = stringResource(id = R.string.weight_label), value = "${weight.weight} ${weight.unit}"
+                                label = stringResource(id = R.string.weight_label),
+                                value = "${weight.weight} ${weight.unit}"
                             )
                         }
                     }
@@ -331,7 +348,8 @@ fun ProductView(
             product.warranty?.let { warranty ->
                 SectionView(title = stringResource(id = R.string.warranty_label)) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         ProductDetailRow(
                             label = stringResource(id = R.string.warranty_duration_label, warranty.months),
@@ -346,7 +364,8 @@ fun ProductView(
                     Text(
                         text = legal,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier.semantics { contentDescription = legal }
                     )
                 }
             }
@@ -356,10 +375,12 @@ fun ProductView(
                     Text(
                         text = warning,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier.semantics { contentDescription = warning }
                     )
                 }
             }
+
         }
     }
 
@@ -428,19 +449,17 @@ fun ProductDetailRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Label
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSecondaryContainer
         )
+        // Value
         Text(
-            text = value, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSecondaryContainer
+            text = value,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSecondaryContainer
         )
     }
 }
-
-//            if (!cart.contains(product)) {
-//                IconButton(onClick = { showDialog = true }) {
-//                    Icon(imageVector = ImageVector.vectorResource(add_shopping_cart), contentDescription = null)
-//                }
-//            }

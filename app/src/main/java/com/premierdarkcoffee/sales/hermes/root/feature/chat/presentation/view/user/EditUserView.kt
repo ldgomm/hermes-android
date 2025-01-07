@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -27,12 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.premierdarkcoffee.sales.hermes.R
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.user.User
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.chat.titleStyle
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,13 +48,23 @@ fun EditUserView(
     var newLocation by remember { mutableStateOf<LatLng?>(null) }
     var oldLocation by remember { mutableStateOf<LatLng?>(null) }
 
-    Scaffold(topBar = {
-        TopAppBar(title = { Text(user.name, style = titleStyle) }, navigationIcon = {
-            IconButton(onClick = popBackStack) {
-                Icon(ImageVector.vectorResource(R.drawable.arrow_back), null)
-            }
-        }, actions = { Button({ showAlert = true }) { Text("Guardar") } })
-    }) { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(user.name, style = MaterialTheme.typography.titleLarge) },
+                navigationIcon = {
+                    IconButton(onClick = popBackStack) {
+                        Icon(ImageVector.vectorResource(R.drawable.arrow_back), contentDescription = null)
+                    }
+                },
+                actions = {
+                    Button(onClick = { showAlert = true }) {
+                        Text(stringResource(id = R.string.save))
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
 
         Box(
             modifier = Modifier
@@ -67,27 +78,31 @@ fun EditUserView(
         }
 
         if (showAlert) {
-            AlertDialog(onDismissRequest = { showAlert = false }, title = { Text("Cambiar el lugar de buúsqueda") }, text = {
-                Text("Esta seguro que desea cambiar su ubicación?")
-            }, confirmButton = {
-                Button(onClick = {
-                    SharedPreferencesHelper.setLatitude(context, newLocation!!.latitude)
-                    SharedPreferencesHelper.setLongitude(
-                        context, newLocation!!.longitude
-                    )
-                    showAlert = false
-                    popBackStack()
-                }) {
-                    Text("Sí")
+            AlertDialog(
+                onDismissRequest = { showAlert = false },
+                title = { Text(stringResource(id = R.string.change_location_title)) },
+                text = { Text(stringResource(id = R.string.change_location_confirmation)) },
+                confirmButton = {
+                    Button(onClick = {
+                        newLocation?.let {
+                            SharedPreferencesHelper.setLatitude(context, it.latitude)
+                            SharedPreferencesHelper.setLongitude(context, it.longitude)
+                        }
+                        showAlert = false
+                        popBackStack()
+                    }) {
+                        Text(stringResource(id = R.string.yes))
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        newLocation = oldLocation
+                        showAlert = false
+                    }) {
+                        Text(stringResource(id = R.string.no))
+                    }
                 }
-            }, dismissButton = {
-                Button(onClick = {
-                    newLocation = oldLocation
-                    showAlert = false
-                }) {
-                    Text("No")
-                }
-            })
+            )
         }
     }
 }

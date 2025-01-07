@@ -3,8 +3,6 @@ package com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.c
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,12 +23,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.premierdarkcoffee.sales.hermes.R.drawable.verified
+import com.premierdarkcoffee.sales.hermes.R
 
 @Composable
 fun NewChatItemView(
@@ -39,59 +39,73 @@ fun NewChatItemView(
     subtitle: String,
     onNewChatButtonClicked: () -> Unit
 ) {
-    Row(modifier = Modifier
-        .clickable { onNewChatButtonClicked() }
-        .fillMaxWidth()
-        .background(
-            Color.LightGray.copy(0.05f),
-            shape = RoundedCornerShape(8.dp)
-        )
-        .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically) {
-        // Image and verification icon
-        Box {
-            Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(
-                        MaterialTheme.colorScheme.primary.copy(0.9f),
-                        shape = CircleShape
-                    )
-                    .padding(8.dp),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+    // Localized strings for accessibility
+    val chatImageDescription = stringResource(id = R.string.chat_image_description)
+    val verifiedIconDescription = stringResource(id = R.string.verified_icon_description)
+
+    Row(
+        modifier = Modifier
+            .clickable { onNewChatButtonClicked() }
+            .fillMaxWidth()
+            .background(
+                color = Color.LightGray.copy(alpha = 0.05f),
+                shape = RoundedCornerShape(8.dp)
             )
-        }
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Image with accessible content description
+        Image(
+            painter = painterResource(id = imageRes),
+            contentDescription = chatImageDescription,
+            modifier = Modifier
+                .size(50.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+                    shape = CircleShape
+                )
+                .padding(8.dp),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
+        )
+
         Spacer(modifier = Modifier.width(8.dp))
 
-        // Title and subtitle
+        // Title and subtitle with verified icon
         Column(modifier = Modifier.weight(1f)) {
             Row(
-                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Title
                 Text(
-                    title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp,
-                    maxLines = 1
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.semantics {
+                        contentDescription = title
+                    }
                 )
+
+                // Verified Icon
                 Icon(
-                    ImageVector.vectorResource(verified),
-                    contentDescription = "",
+                    imageVector = ImageVector.vectorResource(id = R.drawable.verified),
+                    contentDescription = verifiedIconDescription,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .size(20.dp)
                         .offset(x = 6.dp)
                 )
             }
+
+            // Subtitle
             Text(
-                subtitle,
-                fontSize = 14.sp,
-                color = Color.Gray,
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.semantics {
+                    contentDescription = subtitle
+                }
             )
         }
     }

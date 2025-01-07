@@ -20,6 +20,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -27,6 +30,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.google.gson.Gson
+import com.premierdarkcoffee.sales.hermes.R
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.user.User
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.product.Product
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.store.GeoPoint
@@ -54,6 +58,15 @@ fun ProductItemView(
     product: Product,
     onProductCardClicked: (productJson: String) -> Unit
 ) {
+    val context = LocalContext.current
+
+    // Localized strings for accessibility
+    val offerLabel = stringResource(id = R.string.offer_label)
+    val distanceLabel = stringResource(id = R.string.distance_label)
+    val discountLabel = stringResource(id = R.string.discount_label)
+    val currentPriceLabel = stringResource(id = R.string.current_price_label)
+    val originalPriceLabel = stringResource(id = R.string.original_price_label)
+
     val numberFormat = NumberFormat.getCurrencyInstance().apply {
         currency = Currency.getInstance(product.price.currency)
     }
@@ -69,66 +82,75 @@ fun ProductItemView(
         Row(
             modifier = Modifier
                 .padding(12.dp)
-                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            // Product Image
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(product.image.url).crossfade(true)
-                    .diskCachePolicy(CachePolicy.ENABLED)  // Ensures the image is cached on disk
-                    .memoryCachePolicy(CachePolicy.ENABLED)  // Ensures the image is cached in memory
+                model = ImageRequest.Builder(context)
+                    .data(product.image.url)
+                    .crossfade(true)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
                     .build(),
-                contentDescription = product.name,
+                contentDescription = "${product.name} image",
                 modifier = Modifier
                     .size(72.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .semantics { contentDescription = "${product.name} image" },
                 contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(16.dp))
-            Column(verticalArrangement = Arrangement.Center) {
+
+            // Product Details
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = product.name.split(" ").take(2).joinToString(" "),
-                    modifier = Modifier
-                        .padding(bottom = 4.dp)
-                        .fillMaxWidth(0.6f),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 2
+                    maxLines = 2,
+                    modifier = Modifier
+                        .padding(bottom = 4.dp)
+                        .semantics { contentDescription = product.name }
                 )
                 Text(
                     text = product.model,
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                Row {
-                    store?.let {
+                store?.let {
+                    Row {
                         Text(
                             text = it.name,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(bottom = 4.dp)
+                            modifier = Modifier.padding(end = 4.dp)
                         )
-                    }
-                    user.location.let { userLocation ->
-                        store?.address?.location?.let { storeLocation ->
-                            val haversineDistance = haversineDistance(userLocation, storeLocation)
-                            Text(
-                                text = " ${"%.0f".format(haversineDistance)} km",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(bottom = 4.dp),
-                                maxLines = 1
-                            )
+                        user.location.let { userLocation ->
+                            store.address?.location?.let { storeLocation ->
+                                val distance = haversineDistance(userLocation, storeLocation)
+                                Text(
+                                    text = "$distanceLabel: ${"%.0f".format(distance)} km",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                 }
             }
+
+            // Pricing Details
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 if (product.price.offer.isActive) {
                     Text(
-                        text = "${product.price.offer.discount}% OFF",
+                        text = "$offerLabel ${product.price.offer.discount}%",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
@@ -136,7 +158,7 @@ fun ProductItemView(
                             .clip(RoundedCornerShape(7.dp))
                             .background(Color.Red.copy(alpha = 0.7f))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
-
+                            .semantics { contentDescription = "$discountLabel ${product.price.offer.discount}%" }
                     )
                 }
                 Text(
@@ -144,20 +166,25 @@ fun ProductItemView(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .semantics { contentDescription = "$currentPriceLabel ${numberFormat.format(product.price.amount)}" }
                 )
                 if (product.price.offer.isActive) {
                     Text(
                         text = numberFormat.format(originalPrice),
                         style = MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 2.dp)
+                        modifier = Modifier
+                            .padding(top = 2.dp)
+                            .semantics { contentDescription = "$originalPriceLabel ${numberFormat.format(originalPrice)}" }
                     )
                 }
             }
         }
     }
 }
+
 
 fun haversineDistance(
     userLocation: GeoPoint,
