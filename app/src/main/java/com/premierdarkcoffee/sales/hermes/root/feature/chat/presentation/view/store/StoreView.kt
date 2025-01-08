@@ -17,10 +17,10 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.store.S
 
 @Composable
 fun StoreView(store: Store?) {
-
     Scaffold { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             Text(store?.name ?: "Error")
         }
     }
 }
+

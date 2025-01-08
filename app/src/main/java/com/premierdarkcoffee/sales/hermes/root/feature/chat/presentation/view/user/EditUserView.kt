@@ -72,7 +72,9 @@ fun EditUserView(
             }, confirmButton = {
                 Button(onClick = {
                     SharedPreferencesHelper.setLatitude(context, newLocation!!.latitude)
-                    SharedPreferencesHelper.setLongitude(context, newLocation!!.longitude)
+                    SharedPreferencesHelper.setLongitude(
+                        context, newLocation!!.longitude
+                    )
                     showAlert = false
                     popBackStack()
                 }) {

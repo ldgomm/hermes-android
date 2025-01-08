@@ -14,6 +14,11 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.mess
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.message.MessageDto
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.message.MessageStatusDto
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.message.MessageTypeDto
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.Attachment
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.AttachmentType
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.Message
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageStatus
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType
 import java.util.UUID
 
 enum class MessageStatusEntity { SENT, DELIVERED, READ }
@@ -28,6 +33,10 @@ data class AttachmentEntity(val id: String = UUID.randomUUID().toString(),
 
     fun toAttachmentDto(): AttachmentDto {
         return AttachmentDto(url = url, type = AttachmentTypeDto.valueOf(type.name), size = size, name = name)
+    }
+
+    fun toAttachment(): Attachment {
+        return Attachment(url = url, type = AttachmentType.valueOf(type.name), size = size, name = name)
     }
 }
 
@@ -56,5 +65,18 @@ data class MessageEntity(@PrimaryKey(autoGenerate = false) val id: String,
                           type = MessageTypeDto.valueOf(type.name),
                           attachment = attachment?.toAttachmentDto(),
                           product = product)
+    }
+
+    fun toMessage(): Message {
+        return Message(id = id,
+                       text = text,
+                       fromClient = fromClient,
+                       date = date,
+                       clientId = clientId,
+                       storeId = storeId,
+                       status = MessageStatus.valueOf(status.name),
+                       type = MessageType.valueOf(type.name),
+                       attachment = attachment?.toAttachment(),
+                       product = product)
     }
 }

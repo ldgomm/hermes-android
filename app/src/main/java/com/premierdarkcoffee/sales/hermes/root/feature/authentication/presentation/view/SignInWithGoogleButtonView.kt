@@ -65,22 +65,37 @@ fun SignInWithGoogleButtonView(
             .padding(horizontal = 10.dp)
             .clickable(enabled = !signedInState) {
                 onSignInWithGoogleButtonClicked(true)
-            }, shape = shape, border = BorderStroke(width = borderStrokeWidth, color = borderColor), color = backgroundColor
+            },
+        shape = shape,
+        border = BorderStroke(width = borderStrokeWidth, color = borderColor),
+        color = backgroundColor
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
-                .animateContentSize(animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing)),
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 300, easing = LinearOutSlowInEasing
+                    )
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Icon(painter = painterResource(id = icon), "Google logo", tint = Unspecified)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = buttonText, style = TextStyle(color = DarkGray, fontSize = MaterialTheme.typography.bodyMedium.fontSize))
+            Text(
+                text = buttonText, style = TextStyle(
+                    color = DarkGray, fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                )
+            )
             if (signedInState) {
                 Spacer(modifier = Modifier.width(16.dp))
-                CircularProgressIndicator(modifier = Modifier.size(17.dp), strokeWidth = 2.dp, color = progressIndicatorColor)
+                CircularProgressIndicator(
+                    modifier = Modifier.size(17.dp),
+                    strokeWidth = 2.dp,
+                    color = progressIndicatorColor
+                )
             }
         }
     }

@@ -16,7 +16,8 @@ import androidx.lifecycle.LiveData
 
 class NetworkMonitor(context: Context) : LiveData<Boolean>() {
 
-    private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             postValue(true)
@@ -28,7 +29,9 @@ class NetworkMonitor(context: Context) : LiveData<Boolean>() {
     }
 
     init {
-        val request = NetworkRequest.Builder().addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build()
+        val request =
+            NetworkRequest.Builder().addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
         connectivityManager.registerNetworkCallback(request, networkCallback)
     }
 }

@@ -62,3 +62,4 @@ object SharedPreferencesHelper {
         getPreferences(context).edit().putBoolean(DO_NOT_AGAIN_DISTANCE_ALERT, value).apply()
     }
 }
+

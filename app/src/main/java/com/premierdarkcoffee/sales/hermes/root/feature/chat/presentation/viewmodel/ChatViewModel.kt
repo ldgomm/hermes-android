@@ -132,8 +132,9 @@ class ChatViewModel @Inject constructor(
         geoPoint: GeoPoint,
         distance: Int
     ) {
-        val clientMessage =
-            ChatMessage(isUser = true, firstMessage = inputText, products = null, secondMessage = null, optionalProducts = null)
+        val clientMessage = ChatMessage(
+            isUser = true, firstMessage = inputText, products = null, secondMessage = null, optionalProducts = null
+        )
         _isTyping.value = true
 
         viewModelScope.launch {
@@ -142,11 +143,7 @@ class ChatViewModel @Inject constructor(
                 val responseResult = withContext(Dispatchers.IO) {
                     delay(1000) // Simulated network delay
                     val request = ClientProductRequest(
-                        key = clientKey,
-                        query = inputText,
-                        clientId = userId ?: "",
-                        location = geoPoint.toGeoPointDto(),
-                        distance = distance
+                        key = clientKey, query = inputText, clientId = userId ?: "", location = geoPoint.toGeoPointDto(), distance = distance
                     )
                     sendMessageToAIUseCase.invoke(getUrlFor(endpoint = "hermes"), request = request).toList().first()
                 }
@@ -178,22 +175,14 @@ class ChatViewModel @Inject constructor(
                     addChatMessage(serverMessage)
                 }.onFailure { exception ->
                     val errorMessage = ChatMessage(
-                        isUser = false,
-                        firstMessage = exception.message.orEmpty(),
-                        products = null,
-                        secondMessage = null,
-                        optionalProducts = null
+                        isUser = false, firstMessage = exception.message.orEmpty(), products = null, secondMessage = null, optionalProducts = null
                     )
                     addChatMessage(errorMessage)
                 }
             } catch (e: Exception) {
                 // Handle any exceptions that occur while processing the response
                 val errorMessage = ChatMessage(
-                    isUser = false,
-                    firstMessage = "An error occurred: ${e.message}",
-                    products = null,
-                    secondMessage = null,
-                    optionalProducts = null
+                    isUser = false, firstMessage = "An error occurred: ${e.message}", products = null, secondMessage = null, optionalProducts = null
                 )
                 addChatMessage(errorMessage)
             }
@@ -227,9 +216,13 @@ class ChatViewModel @Inject constructor(
     fun markMessageAsReadLaunchedEffect(message: MessageEntity) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.d(TAG, "markMessageAsReadLaunchedEffect: Updating message with id: ${message.id}, text: ${message.text}")
+                Log.d(
+                    TAG, "markMessageAsReadLaunchedEffect: Updating message with id: ${message.id}, text: ${message.text}"
+                )
                 markMessageAsReadUseCase.invoke(message) {
-                    Log.d(TAG, "markMessageAsReadLaunchedEffect: Updated message with id: ${message.id}, text: ${message.text}")
+                    Log.d(
+                        TAG, "markMessageAsReadLaunchedEffect: Updated message with id: ${message.id}, text: ${message.text}"
+                    )
                 }
             }
         }
@@ -365,11 +358,7 @@ class ChatViewModel @Inject constructor(
         Log.e(TAG, "Error: ${exception.message}")
         _isTyping.value = isTyping
         val errorMessage = ChatMessage(
-            isUser = false,
-            firstMessage = exception.message.orEmpty(),
-            products = null,
-            secondMessage = null,
-            optionalProducts = null
+            isUser = false, firstMessage = exception.message.orEmpty(), products = null, secondMessage = null, optionalProducts = null
         )
         _gptMessages.value += errorMessage
         addChatMessage(errorMessage)

@@ -23,18 +23,46 @@ fun NavGraphBuilder.authenticationRoute(onNavigateToProductsViewTriggered: () ->
         val oneTapState = rememberOneTapSignInState()
         val context = LocalContext.current
 
-        AuthenticationView(oneTapState = oneTapState, signedInState = signedInState, onSignInWithGoogleButtonClicked = {
-            oneTapState.open()
-            viewModel.setSignInState(it)
-        }, onTokenIdReceived = { tokenId ->
-            viewModel.signInWithFirebase(tokenId = tokenId, onSuccess = { username, token ->
-                Log.d(TAG, "authenticationRoute: Token: $token")
-                SecurePreferencesHelper.setToken(context, token = token)
-                SharedPreferencesHelper.setName(context, username)
-                SharedPreferencesHelper.setLatitude(context, latitude = -0.182847)
-                SharedPreferencesHelper.setLongitude(context, longitude = -78.484498)
-                onNavigateToProductsViewTriggered()
-            }, onFailure = { Log.d(TAG, "authenticationRoute: Error ${it.message}") })
-        }, onDialogDismissed = {})
+        AuthenticationView(
+            oneTapState = oneTapState,
+            signedInState = signedInState,
+            onSignInWithGoogleButtonClicked = {
+                oneTapState.open()
+                viewModel.setSignInState(it)
+            },
+            onTokenIdReceived = { tokenId ->
+                viewModel.signInWithFirebase(
+                    tokenId = tokenId,
+                    onSuccess = { username, token ->
+                        Log.d(
+                            TAG,
+                            "authenticationRoute: Token: $token"
+                        )
+                        SecurePreferencesHelper.setToken(
+                            context,
+                            token = token
+                        )
+                        SharedPreferencesHelper.setName(
+                            context,
+                            username
+                        )
+                        SharedPreferencesHelper.setLatitude(
+                            context,
+                            latitude = -0.182847
+                        )
+                        SharedPreferencesHelper.setLongitude(
+                            context,
+                            longitude = -78.484498
+                        )
+                        onNavigateToProductsViewTriggered()
+                    },
+                    onFailure = {
+                        Log.d(
+                            TAG,
+                            "authenticationRoute: Error ${it.message}"
+                        )
+                    })
+            },
+            onDialogDismissed = {})
     }
 }
