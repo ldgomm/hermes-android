@@ -1,7 +1,7 @@
 package com.premierdarkcoffee.sales.hermes.root.util.view
 
 //
-//  MapView.kt
+//  EditUserMapView.kt
 //  Hermes
 //
 //  Created by José Ruiz on 2/8/24.

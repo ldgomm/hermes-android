@@ -70,7 +70,7 @@ fun ServerMessageView(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp),
+            .padding(start = 4.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {

@@ -1,7 +1,7 @@
 package com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.search
 
 //
-//  DistanceMapView.kt
+//  SearchDistanceMapView.kt
 //  Hermes
 //
 //  Created by José Ruiz on 8/8/24.
@@ -54,7 +54,7 @@ import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
-fun DistanceMapView(
+fun SearchDistanceMapView(
     userLocation: GeoPoint,
     distance: Int,
     onDistanceChange: (Int) -> Unit,

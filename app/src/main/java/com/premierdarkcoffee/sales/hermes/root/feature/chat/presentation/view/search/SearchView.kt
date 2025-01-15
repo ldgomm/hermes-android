@@ -192,7 +192,7 @@ fun SearchView(
                 state = listState, modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(8.dp), verticalArrangement = Arrangement.Bottom
+                    .padding(4.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 // Empty state with search phrases
                 item {
@@ -416,7 +416,7 @@ fun SearchView(
 
     if (openBottomSheet) {
         ModalBottomSheet(onDismissRequest = { openBottomSheet = false }, sheetState = bottomSheetState) {
-            DistanceMapView(
+            SearchDistanceMapView(
                 userLocation = user.location, distance = distance, onDistanceChange = {
                     distance = it
                     SharedPreferencesHelper.setDistance(context, distance)
