@@ -83,8 +83,8 @@ fun ClientMessageView(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(end = 12.dp)
-            .padding(top = 8.dp),
+            .padding(end = 4.dp)
+            .padding(top = 4.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.End
     ) {

@@ -131,7 +131,7 @@ fun ConversationView(
             // Messages
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 12.dp)
+                    .padding(horizontal = 4.dp)
                     .verticalScroll(scrollState)
                     .weight(1f)
             ) {

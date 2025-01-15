@@ -71,7 +71,7 @@ fun EditUserView(
                 .padding(paddingValues)
                 .clip(RoundedCornerShape(8.dp))
         ) {
-            MapView(user.location) { selectedLocation ->
+            EditUserMapView(user.location) { selectedLocation ->
                 oldLocation = LatLng(user.location.coordinates[1], user.location.coordinates[0])
                 newLocation = selectedLocation
             }
