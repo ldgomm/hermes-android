@@ -63,7 +63,7 @@ fun StoreMessageView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
-                    .padding(start = 8.dp)
+                    .padding(start = 4.dp)
                     .wrapContentWidth(Alignment.Start)
                     .padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.Start,

@@ -81,7 +81,7 @@ fun UserView(
             val mapLocationDescription = stringResource(R.string.map_location_description)
             Section {
                 val location = LatLng(user.location.coordinates[1], user.location.coordinates[0])
-                SimpleMapView(
+                UserMapView(
                     location = location,
                     modifier = Modifier
                         .height(300.dp)

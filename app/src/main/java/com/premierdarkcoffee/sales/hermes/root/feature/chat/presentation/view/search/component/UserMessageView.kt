@@ -40,7 +40,7 @@ fun UserMessageView(message: ChatMessage) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(end = 8.dp)
+            .padding(end = 4.dp)
             .wrapContentWidth(Alignment.End),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
