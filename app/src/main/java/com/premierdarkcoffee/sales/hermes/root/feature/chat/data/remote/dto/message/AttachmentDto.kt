@@ -15,13 +15,11 @@ import kotlinx.serialization.Serializable
 import java.util.UUID
 
 @Serializable
-data class AttachmentDto(
-    val id: String = UUID.randomUUID().toString(),
-    val url: String = "",
-    val type: AttachmentTypeDto = AttachmentTypeDto.IMAGE,
-    val size: Long = 0L,
-    val name: String = ""
-) {
+data class AttachmentDto(val id: String = UUID.randomUUID().toString(),
+                         val url: String = "",
+                         val type: AttachmentTypeDto = AttachmentTypeDto.IMAGE,
+                         val size: Long = 0L,
+                         val name: String = "") {
 
     fun toAttachment(): Attachment {
         return Attachment(url = url, type = AttachmentType.valueOf(type.name), size = size, name = name)
