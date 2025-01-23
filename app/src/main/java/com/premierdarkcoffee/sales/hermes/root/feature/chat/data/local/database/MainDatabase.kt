@@ -27,27 +27,25 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.co
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.message.MessageEntity
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.store.StoreEntity
 
-@Database(
-    entities = [ChatMessageEntity::class, MessageEntity::class, CartEntity::class, StoreEntity::class],
-    version = 1,
-    exportSchema = false
-)
+@Database(entities = [ChatMessageEntity::class, MessageEntity::class, CartEntity::class, StoreEntity::class],
+          version = 1,
+          exportSchema = false)
 @TypeConverters(
-    ChatMessageConverter::class,
-    ProductListConverter::class,
-    CategoryConverter::class,
-    ImageConverter::class,
-    InformationConverter::class,
-    PriceConverter::class,
-    SpecificationsConverter::class,
-    StringConverter::class,
-    WarrantyConverter::class,
-    StoreInformationConverter::class,
-    AddressConverter::class,
-    GeoPointConverter::class,
-    MessageConverter::class,
-    ProductConverter::class,
-    StoreStatusConverter::class,
+        ChatMessageConverter::class,
+        ProductListConverter::class,
+        CategoryConverter::class,
+        ImageConverter::class,
+        InformationConverter::class,
+        PriceConverter::class,
+        SpecificationsConverter::class,
+        StringConverter::class,
+        WarrantyConverter::class,
+        StoreInformationConverter::class,
+        AddressConverter::class,
+        GeoPointConverter::class,
+        MessageConverter::class,
+        ProductConverter::class,
+        StoreStatusConverter::class,
 )
 abstract class MainDatabase : RoomDatabase() {
     abstract val chatDao: ChatDao

@@ -1,7 +1,6 @@
 package com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.product
 
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.product.Information
-import androidx.room.Entity
 
 data class InformationEntity(val id: String,
                              val title: String,

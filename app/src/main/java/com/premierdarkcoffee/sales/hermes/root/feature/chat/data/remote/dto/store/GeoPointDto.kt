@@ -4,10 +4,7 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.store.G
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GeoPointDto(
-    val type: String,
-    val coordinates: List<Double>
-) {
+data class GeoPointDto(val type: String, val coordinates: List<Double>) {
 
     fun toGeoPoint(): GeoPoint {
         return GeoPoint(type, coordinates)
