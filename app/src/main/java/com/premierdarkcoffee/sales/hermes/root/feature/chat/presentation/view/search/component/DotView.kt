@@ -21,14 +21,10 @@ import androidx.compose.ui.unit.dp
  * @param offset The vertical offset to be applied to the dot.
  */
 @Composable
-fun DotView(
-    size: Dp,
-    offset: Float
-) {
-    Box(
-        modifier = Modifier
-            .size(size) // Set the size of the dot
-            .offset(y = offset.dp) // Apply the vertical offset
-            .background(MaterialTheme.colorScheme.primary, shape = CircleShape) // Set the background color and shape
+fun DotView(size: Dp, offset: Float) {
+    Box(modifier = Modifier
+        .size(size) // Set the size of the dot
+        .offset(y = offset.dp) // Apply the vertical offset
+        .background(MaterialTheme.colorScheme.primary, shape = CircleShape) // Set the background color and shape
     )
 }

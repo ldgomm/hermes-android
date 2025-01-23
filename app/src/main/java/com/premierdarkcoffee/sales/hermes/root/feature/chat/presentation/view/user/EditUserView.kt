@@ -38,39 +38,28 @@ import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditUserView(
-    user: User,
-    popBackStack: () -> Unit
-) {
+fun EditUserView(user: User, popBackStack: () -> Unit) {
     val context = LocalContext.current
 
     var showAlert by remember { mutableStateOf(false) }
     var newLocation by remember { mutableStateOf<LatLng?>(null) }
     var oldLocation by remember { mutableStateOf<LatLng?>(null) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(user.name, style = MaterialTheme.typography.titleLarge) },
-                navigationIcon = {
-                    IconButton(onClick = popBackStack) {
-                        Icon(ImageVector.vectorResource(R.drawable.arrow_back), contentDescription = null)
-                    }
-                },
-                actions = {
-                    Button(onClick = { showAlert = true }) {
-                        Text(stringResource(id = R.string.save))
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
+    Scaffold(topBar = {
+        TopAppBar(title = { Text(user.name, style = MaterialTheme.typography.titleLarge) }, navigationIcon = {
+            IconButton(onClick = popBackStack) {
+                Icon(ImageVector.vectorResource(R.drawable.arrow_back), contentDescription = null)
+            }
+        }, actions = {
+            Button(onClick = { showAlert = true }) {
+                Text(stringResource(id = R.string.save))
+            }
+        })
+    }) { paddingValues ->
 
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .clip(RoundedCornerShape(8.dp))
-        ) {
+        Box(modifier = Modifier
+            .padding(paddingValues)
+            .clip(RoundedCornerShape(8.dp))) {
             EditUserMapView(user.location) { selectedLocation ->
                 oldLocation = LatLng(user.location.coordinates[1], user.location.coordinates[0])
                 newLocation = selectedLocation
@@ -78,31 +67,29 @@ fun EditUserView(
         }
 
         if (showAlert) {
-            AlertDialog(
-                onDismissRequest = { showAlert = false },
-                title = { Text(stringResource(id = R.string.change_location_title)) },
-                text = { Text(stringResource(id = R.string.change_location_confirmation)) },
-                confirmButton = {
-                    Button(onClick = {
-                        newLocation?.let {
-                            SharedPreferencesHelper.setLatitude(context, it.latitude)
-                            SharedPreferencesHelper.setLongitude(context, it.longitude)
-                        }
-                        showAlert = false
-                        popBackStack()
-                    }) {
-                        Text(stringResource(id = R.string.yes))
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = {
-                        newLocation = oldLocation
-                        showAlert = false
-                    }) {
-                        Text(stringResource(id = R.string.no))
-                    }
-                }
-            )
+            AlertDialog(onDismissRequest = { showAlert = false },
+                        title = { Text(stringResource(id = R.string.change_location_title)) },
+                        text = { Text(stringResource(id = R.string.change_location_confirmation)) },
+                        confirmButton = {
+                            Button(onClick = {
+                                newLocation?.let {
+                                    SharedPreferencesHelper.setLatitude(context, it.latitude)
+                                    SharedPreferencesHelper.setLongitude(context, it.longitude)
+                                }
+                                showAlert = false
+                                popBackStack()
+                            }) {
+                                Text(stringResource(id = R.string.yes))
+                            }
+                        },
+                        dismissButton = {
+                            Button(onClick = {
+                                newLocation = oldLocation
+                                showAlert = false
+                            }) {
+                                Text(stringResource(id = R.string.no))
+                            }
+                        })
         }
     }
 }

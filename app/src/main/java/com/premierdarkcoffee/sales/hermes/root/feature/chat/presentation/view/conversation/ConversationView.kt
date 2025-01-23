@@ -29,8 +29,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,15 +72,13 @@ import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConversationView(
-    user: User,
-    store: Store?,
-    messages: List<Message>,
-    onSendMessageToStoreButtonClicked: (MessageDto) -> Unit,
-    markMessageAsReadLaunchedEffect: (MessageEntity) -> Unit,
-    onProductCardClicked: (product: String) -> Unit,
-    popBackStack: () -> Unit
-) {
+fun ConversationView(user: User,
+                     store: Store?,
+                     messages: List<Message>,
+                     onSendMessageToStoreButtonClicked: (MessageDto) -> Unit,
+                     markMessageAsReadLaunchedEffect: (MessageEntity) -> Unit,
+                     onProductCardClicked: (product: String) -> Unit,
+                     popBackStack: () -> Unit) {
     val context = LocalContext.current
     var inputText by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
@@ -100,145 +96,99 @@ fun ConversationView(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = store?.name ?: stringResource(R.string.no_store_name),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.back_button_description)
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectTapGestures { focusManager.clearFocus() }
-                }
-        ) {
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            Text(text = store?.name ?: stringResource(R.string.no_store_name), style = MaterialTheme.typography.titleMedium)
+        }, navigationIcon = {
+            IconButton(onClick = { popBackStack() }) {
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_button_description))
+            }
+        })
+    }) { paddingValues ->
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures { focusManager.clearFocus() }
+            }) {
             // Messages
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .verticalScroll(scrollState)
-                    .weight(1f)
-            ) {
+            Column(modifier = Modifier
+                .padding(horizontal = 4.dp)
+                .verticalScroll(scrollState)
+                .weight(1f)) {
                 groupedMessages.forEach { (day, messages) ->
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = day.time.formatDayDate(context),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.surfaceVariant,
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 12.dp),
-                            textAlign = TextAlign.Center
-                        )
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text(text = day.time.formatDayDate(context),
+                             style = MaterialTheme.typography.bodySmall,
+                             color = MaterialTheme.colorScheme.onSurfaceVariant,
+                             modifier = Modifier
+                                 .padding(8.dp)
+                                 .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(4.dp))
+                                 .padding(horizontal = 12.dp),
+                             textAlign = TextAlign.Center)
                     }
 
                     messages.forEach { message ->
                         if (message.fromClient) {
                             val productInfo = Gson().fromJson(message.product, ProductDto::class.java)
-                            ClientMessageView(
-                                user = user,
-                                store = store,
-                                message = message,
-                                product = productInfo?.toProductInformation(),
-                                onProductCardClicked = onProductCardClicked
-                            )
+                            ClientMessageView(user = user,
+                                              store = store,
+                                              message = message,
+                                              product = productInfo?.toProductInformation(),
+                                              onProductCardClicked = onProductCardClicked)
                         } else {
-                            StoreMessageView(
-                                message = message,
-                                markMessageAsReadLaunchedEffect = markMessageAsReadLaunchedEffect
-                            )
+                            StoreMessageView(message = message, markMessageAsReadLaunchedEffect = markMessageAsReadLaunchedEffect)
                         }
                     }
                 }
             }
 
             // Input Row
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedTextField(
-                    value = inputText,
-                    onValueChange = { inputText = it },
-                    placeholder = {
-                        Text(
-                            text = stringResource(id = R.string.type_a_message),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
-                    singleLine = true,
-                    shape = RoundedCornerShape(8.dp),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(onSend = {
-                        messages.firstOrNull()?.let { value ->
-                            val message = MessageDto(
-                                text = inputText,
-                                fromClient = true,
-                                clientId = value.clientId,
-                                storeId = value.storeId
-                            )
-                            onSendMessageToStoreButtonClicked(message)
-                            inputText = ""
-                        }
-                    })
-                )
+            Row(modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(value = inputText,
+                                  onValueChange = { inputText = it },
+                                  placeholder = {
+                                      Text(text = stringResource(id = R.string.type_a_message),
+                                           style = MaterialTheme.typography.bodyMedium,
+                                           color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                  },
+                                  modifier = Modifier
+                                      .weight(1f)
+                                      .padding(8.dp),
+                                  singleLine = true,
+                                  shape = RoundedCornerShape(8.dp),
+                                  keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
+                                  keyboardActions = KeyboardActions(onSend = {
+                                      messages.firstOrNull()?.let { value ->
+                                          val message = MessageDto(text = inputText,
+                                                                   fromClient = true,
+                                                                   clientId = value.clientId,
+                                                                   storeId = value.storeId)
+                                          onSendMessageToStoreButtonClicked(message)
+                                          inputText = ""
+                                      }
+                                  }))
 
                 Spacer(modifier = Modifier.width(4.dp))
 
-                AnimatedVisibility(
-                    visible = inputText.isNotEmpty(),
-                    enter = expandIn(expandFrom = Alignment.Center) + fadeIn(),
-                    exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut()
-                ) {
-                    IconButton(
-                        onClick = {
-                            messages.firstOrNull()?.let { value ->
-                                val message = MessageDto(
-                                    text = inputText,
-                                    fromClient = true,
-                                    clientId = value.clientId,
-                                    storeId = value.storeId
-                                )
-                                onSendMessageToStoreButtonClicked(message)
-                                inputText = ""
-                            }
-                        },
-                        modifier = Modifier.size(48.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Send,
-                            contentDescription = stringResource(R.string.send_button_description),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
+                AnimatedVisibility(visible = inputText.isNotEmpty(),
+                                   enter = expandIn(expandFrom = Alignment.Center) + fadeIn(),
+                                   exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut()) {
+                    IconButton(onClick = {
+                        messages.firstOrNull()?.let { value ->
+                            val message = MessageDto(text = inputText,
+                                                     fromClient = true,
+                                                     clientId = value.clientId,
+                                                     storeId = value.storeId)
+                            onSendMessageToStoreButtonClicked(message)
+                            inputText = ""
+                        }
+                    }, modifier = Modifier.size(48.dp)) {
+                        Icon(imageVector = Icons.AutoMirrored.Filled.Send,
+                             contentDescription = stringResource(R.string.send_button_description),
+                             tint = MaterialTheme.colorScheme.primary)
                     }
                 }
             }

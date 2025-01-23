@@ -15,10 +15,7 @@ import javax.inject.Inject
 
 class CreateClientUseCase @Inject constructor(private val serviceable: AuthenticationServiceable) {
 
-    operator fun invoke(
-        url: String,
-        request: PostClientRequest
-    ): Flow<Result<LoginResponse>> {
+    operator fun invoke(url: String, request: PostClientRequest): Flow<Result<LoginResponse>> {
         return serviceable.postClient(endpoint = url, request = request)
     }
 }
