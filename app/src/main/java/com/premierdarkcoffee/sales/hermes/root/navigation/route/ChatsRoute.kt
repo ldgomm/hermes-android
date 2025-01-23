@@ -15,13 +15,11 @@ import com.premierdarkcoffee.sales.hermes.root.navigation.ChatsRoute
 import com.premierdarkcoffee.sales.hermes.root.util.function.sharedViewModel
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 
-fun NavGraphBuilder.chatsRoute(
-    navController: NavHostController,
-    navigateToUserView: () -> Unit,
-    onNewChatButtonClicked: () -> Unit,
-    onConversationItemViewClicked: (String) -> Unit,
-    onProductCardClicked: (productJson: String) -> Unit
-) {
+fun NavGraphBuilder.chatsRoute(navController: NavHostController,
+                               navigateToUserView: () -> Unit,
+                               onNewChatButtonClicked: () -> Unit,
+                               onConversationItemViewClicked: (String) -> Unit,
+                               onProductCardClicked: (productJson: String) -> Unit) {
 
     composable<ChatsRoute> { backStackEntry ->
         val viewModel = backStackEntry.sharedViewModel<ChatViewModel>(navController = navController)
@@ -41,16 +39,14 @@ fun NavGraphBuilder.chatsRoute(
             viewModel.getStores(messages.map { it.storeId })
         }
 
-        ChatsView(
-            stores = stores,
-            messages = messages,
-            user = user,
-            cart = cart,
-            navigateToUserView = navigateToUserView,
-            onNewChatButtonClicked = onNewChatButtonClicked,
-            onConversationItemViewClicked = onConversationItemViewClicked,
-            onProductCardClicked = onProductCardClicked,
-            onDeleteProductSwiped = viewModel::deleteCartProduct
-        )
+        ChatsView(stores = stores,
+                  messages = messages,
+                  user = user,
+                  cart = cart,
+                  navigateToUserView = navigateToUserView,
+                  onNewChatButtonClicked = onNewChatButtonClicked,
+                  onConversationItemViewClicked = onConversationItemViewClicked,
+                  onProductCardClicked = onProductCardClicked,
+                  onDeleteProductSwiped = viewModel::deleteCartProduct)
     }
 }

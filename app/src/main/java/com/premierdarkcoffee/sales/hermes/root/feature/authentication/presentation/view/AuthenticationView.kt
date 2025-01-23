@@ -30,62 +30,46 @@ import com.stevdzasan.onetap.OneTapSignInState
 import com.stevdzasan.onetap.OneTapSignInWithGoogle
 
 @Composable
-fun AuthenticationView(
-    oneTapState: OneTapSignInState,
-    signedInState: Boolean,
-    onSignInWithGoogleButtonClicked: (Boolean) -> Unit,
-    onTokenIdReceived: (String) -> Unit,
-    onDialogDismissed: (String) -> Unit
-) {
+fun AuthenticationView(oneTapState: OneTapSignInState,
+                       signedInState: Boolean,
+                       onSignInWithGoogleButtonClicked: (Boolean) -> Unit,
+                       onTokenIdReceived: (String) -> Unit,
+                       onDialogDismissed: (String) -> Unit) {
     Scaffold(
-        modifier = Modifier
-            .background(Color(0xFF222222))
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .fillMaxSize(),
-    ) { innerPadding ->
-        Column(
             modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
                 .background(Color(0xFF222222))
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .fillMaxSize(),
+    ) { innerPadding ->
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()
+            .background(Color(0xFF222222))
+            .padding(horizontal = 20.dp),
+               verticalArrangement = Arrangement.Center,
+               horizontalAlignment = Alignment.CenterHorizontally) {
             // Logo con sombra
-            Image(
-                painter = painterResource(id = R.drawable.logo), // Reemplaza con tu logo
-                contentDescription = "Hermes Logo",
-                modifier = Modifier
-                    .size(200.dp)
-            )
+            Image(painter = painterResource(id = R.drawable.logo), // Reemplaza con tu logo
+                  contentDescription = "Hermes Logo", modifier = Modifier.size(200.dp))
 
             Spacer(modifier = Modifier.height(20.dp))
 
             // Título principal
-            Text(
-                text = "Hermes",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
+            Text(text = "Hermes", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color.White)
 
             Spacer(modifier = Modifier.height(20.dp))
 
             // Subtítulo
-            Text(
-                text = "Encuentra grandes ofertas al alcance de tu mano.",
-                textAlign = TextAlign.Center,
-                fontSize = 16.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(top = 8.dp, bottom = 40.dp)
-            )
+            Text(text = "Encuentra grandes ofertas al alcance de tu mano.",
+                 textAlign = TextAlign.Center,
+                 fontSize = 16.sp,
+                 color = Color.Gray,
+                 modifier = Modifier.padding(top = 8.dp, bottom = 40.dp))
 
             Spacer(Modifier.height(200.dp))
-            SignInWithGoogleButtonView(
-                signedInState = signedInState, onSignInWithGoogleButtonClicked = onSignInWithGoogleButtonClicked
-            )
+            SignInWithGoogleButtonView(signedInState = signedInState,
+                                       onSignInWithGoogleButtonClicked = onSignInWithGoogleButtonClicked)
         }
     }
 

@@ -26,10 +26,9 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthenticationViewModel @Inject constructor(
-    application: Application,
-    private val createClientUseCase: CreateClientUseCase
-) : AndroidViewModel(application) {
+class AuthenticationViewModel @Inject constructor(application: Application,
+                                                  private val createClientUseCase: CreateClientUseCase) :
+    AndroidViewModel(application) {
     private val clientKey: String = getClientKey(getApplication<Application>().applicationContext)
 
     // State variable to track the sign-in process status
@@ -51,11 +50,9 @@ class AuthenticationViewModel @Inject constructor(
      * @param onSuccess A callback invoked upon successful sign-in.
      * @param onFailure A callback invoked when sign-in fails, with an exception provided.
      */
-    fun signInWithFirebase(
-        tokenId: String,
-        onSuccess: (userName: String, token: String) -> Unit,
-        onFailure: (exception: Throwable) -> Unit
-    ) {
+    fun signInWithFirebase(tokenId: String,
+                           onSuccess: (userName: String, token: String) -> Unit,
+                           onFailure: (exception: Throwable) -> Unit) {
         viewModelScope.launch {
             try {
                 val credential = GoogleAuthProvider.getCredential(tokenId, null)
@@ -73,16 +70,15 @@ class AuthenticationViewModel @Inject constructor(
         }
     }
 
-    private fun handleClientCreation(
-        user: FirebaseUser,
-        onSuccess: (userName: String, token: String) -> Unit,
-        onFailure: (exception: Throwable) -> Unit
-    ) {
+    private fun handleClientCreation(user: FirebaseUser,
+                                     onSuccess: (userName: String, token: String) -> Unit,
+                                     onFailure: (exception: Throwable) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val client: ClientDto = getFakeClient(user)
                 Log.d(TAG, "AuthenticationViewModel | Client: $client")
-                createClientUseCase(getUrlFor("cronos-client"), PostClientRequest(key = clientKey, client = client)).collect { result ->
+                createClientUseCase(getUrlFor("cronos-client"),
+                                    PostClientRequest(key = clientKey, client = client)).collect { result ->
                     result.onSuccess { response ->
                         Log.d(TAG, "AuthenticationViewModel | signInWithFirebase: client created")
                         withContext(Dispatchers.Main) {
@@ -111,11 +107,7 @@ class AuthenticationViewModel @Inject constructor(
      * @param onSuccess A callback invoked upon successful user creation.
      * @param onFailure A callback invoked when user creation fails, with an exception provided.
      */
-    private fun handleUserCreation(
-        userId: String,
-        onSuccess: (String) -> Unit,
-        onFailure: (exception: Throwable) -> Unit
-    ) {
+    private fun handleUserCreation(userId: String, onSuccess: (String) -> Unit, onFailure: (exception: Throwable) -> Unit) {
         viewModelScope.launch {
             val userName = userId.substring(startIndex = 0, endIndex = 5).lowercase()
                 .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
@@ -132,18 +124,14 @@ class AuthenticationViewModel @Inject constructor(
     }
 }
 
-fun getFakeClient(
-    user: FirebaseUser
-): ClientDto {
-    return ClientDto(
-        id = user.uid,
-        name = user.displayName ?: "No name",
-        email = user.email ?: "",
-        phone = user.phoneNumber ?: "",
-        image = ImageDto("", "", false),
-        location = GeoPointDto(type = "Point", coordinates = listOf(-78.484498, -0.182847)),
-        createdAt = System.currentTimeMillis()
-    )
+fun getFakeClient(user: FirebaseUser): ClientDto {
+    return ClientDto(id = user.uid,
+                     name = user.displayName ?: "No name",
+                     email = user.email ?: "",
+                     phone = user.phoneNumber ?: "",
+                     image = ImageDto("", "", false),
+                     location = GeoPointDto(type = "Point", coordinates = listOf(-78.484498, -0.182847)),
+                     createdAt = System.currentTimeMillis())
 }
 
 @Serializable

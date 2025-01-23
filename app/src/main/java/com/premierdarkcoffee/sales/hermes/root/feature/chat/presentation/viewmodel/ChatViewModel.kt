@@ -48,31 +48,30 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor(
-    application: Application,
-    //
-    private val sendMessageToAIUseCase: SendMessageToAIUseCase,
-    private val sendMessageToStoreUseCase: SendMessageToStoreUseCase,
-    private val fetchMessagesUseCase: FetchMessagesUseCase,
+class ChatViewModel @Inject constructor(application: Application,
+        //
+                                        private val sendMessageToAIUseCase: SendMessageToAIUseCase,
+                                        private val sendMessageToStoreUseCase: SendMessageToStoreUseCase,
+                                        private val fetchMessagesUseCase: FetchMessagesUseCase,
 //    private val fetchLocalMessagesUseCase: FetchLocalMessagesUseCase,
-    private val markMessageAsReadUseCase: MarkMessageAsReadUseCase,
+                                        private val markMessageAsReadUseCase: MarkMessageAsReadUseCase,
 
-    //
-    private val getStoreByIdUseCase: GetStoreByIdUseCase,
-    //Cart
-    private val insertProductToCartUseCase: InsertProductToCartUseCase,
-    private val readProductsFromCartUseCase: ReadProductsFromCartUseCase,
-    private val deleteCartProductUseCase: DeleteCartProductUseCase,
-    //Chat
-    private val insertChatMessageUseCase: InsertChatMessageUseCase,
-    private val readChatGPTMessagesUseCase: ReadChatGPTMessagesUseCase,
-    private val deleteChatMessagesUseCase: DeleteChatMessagesUseCase,
-    //Store
-    private val insertStoreUseCase: InsertStoreUseCase,
-    private val updateStoreUseCase: UpdateStoreUseCase,
-    private val getAllStoresUseCase: GetAllStoresUseCase,
-    private val deleteStoreByIdUseCase: DeleteStoreByIdUseCase
-) : AndroidViewModel(application) {
+        //
+                                        private val getStoreByIdUseCase: GetStoreByIdUseCase,
+        //Cart
+                                        private val insertProductToCartUseCase: InsertProductToCartUseCase,
+                                        private val readProductsFromCartUseCase: ReadProductsFromCartUseCase,
+                                        private val deleteCartProductUseCase: DeleteCartProductUseCase,
+        //Chat
+                                        private val insertChatMessageUseCase: InsertChatMessageUseCase,
+                                        private val readChatGPTMessagesUseCase: ReadChatGPTMessagesUseCase,
+                                        private val deleteChatMessagesUseCase: DeleteChatMessagesUseCase,
+        //Store
+                                        private val insertStoreUseCase: InsertStoreUseCase,
+                                        private val updateStoreUseCase: UpdateStoreUseCase,
+                                        private val getAllStoresUseCase: GetAllStoresUseCase,
+                                        private val deleteStoreByIdUseCase: DeleteStoreByIdUseCase) :
+    AndroidViewModel(application) {
 
     // Retrieve client-specific key for API requests
     private val clientKey: String = getClientKey(getApplication<Application>().applicationContext)
@@ -127,14 +126,9 @@ class ChatViewModel @Inject constructor(
      * @param inputText The text message input by the user.
      * @param distance The distance parameter for location-based queries.
      */
-    fun sendMessage(
-        inputText: String,
-        geoPoint: GeoPoint,
-        distance: Int
-    ) {
-        val clientMessage = ChatMessage(
-            isUser = true, firstMessage = inputText, products = null, secondMessage = null, optionalProducts = null
-        )
+    fun sendMessage(inputText: String, geoPoint: GeoPoint, distance: Int) {
+        val clientMessage =
+            ChatMessage(isUser = true, firstMessage = inputText, products = null, secondMessage = null, optionalProducts = null)
         _isTyping.value = true
 
         viewModelScope.launch {
@@ -142,9 +136,11 @@ class ChatViewModel @Inject constructor(
                 addChatMessage(clientMessage)
                 val responseResult = withContext(Dispatchers.IO) {
                     delay(1000) // Simulated network delay
-                    val request = ClientProductRequest(
-                        key = clientKey, query = inputText, clientId = userId ?: "", location = geoPoint.toGeoPointDto(), distance = distance
-                    )
+                    val request = ClientProductRequest(key = clientKey,
+                                                       query = inputText,
+                                                       clientId = userId ?: "",
+                                                       location = geoPoint.toGeoPointDto(),
+                                                       distance = distance)
                     sendMessageToAIUseCase.invoke(getUrlFor(endpoint = "hermes"), request = request).toList().first()
                 }
 
@@ -174,16 +170,20 @@ class ChatViewModel @Inject constructor(
                                                     optionalProducts = response.optionalProducts?.map { it.toProductInformation() })
                     addChatMessage(serverMessage)
                 }.onFailure { exception ->
-                    val errorMessage = ChatMessage(
-                        isUser = false, firstMessage = exception.message.orEmpty(), products = null, secondMessage = null, optionalProducts = null
-                    )
+                    val errorMessage = ChatMessage(isUser = false,
+                                                   firstMessage = exception.message.orEmpty(),
+                                                   products = null,
+                                                   secondMessage = null,
+                                                   optionalProducts = null)
                     addChatMessage(errorMessage)
                 }
             } catch (e: Exception) {
                 // Handle any exceptions that occur while processing the response
-                val errorMessage = ChatMessage(
-                    isUser = false, firstMessage = "An error occurred: ${e.message}", products = null, secondMessage = null, optionalProducts = null
-                )
+                val errorMessage = ChatMessage(isUser = false,
+                                               firstMessage = "An error occurred: ${e.message}",
+                                               products = null,
+                                               secondMessage = null,
+                                               optionalProducts = null)
                 addChatMessage(errorMessage)
             }
         }
@@ -216,13 +216,9 @@ class ChatViewModel @Inject constructor(
     fun markMessageAsReadLaunchedEffect(message: MessageEntity) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                Log.d(
-                    TAG, "markMessageAsReadLaunchedEffect: Updating message with id: ${message.id}, text: ${message.text}"
-                )
+                Log.d(TAG, "markMessageAsReadLaunchedEffect: Updating message with id: ${message.id}, text: ${message.text}")
                 markMessageAsReadUseCase.invoke(message) {
-                    Log.d(
-                        TAG, "markMessageAsReadLaunchedEffect: Updated message with id: ${message.id}, text: ${message.text}"
-                    )
+                    Log.d(TAG, "markMessageAsReadLaunchedEffect: Updated message with id: ${message.id}, text: ${message.text}")
                 }
             }
         }
@@ -273,10 +269,7 @@ class ChatViewModel @Inject constructor(
      * @param storeId The ID of the store to fetch.
      * @param completion A callback to be invoked with the fetched store data.
      */
-    private suspend fun fetchStore(
-        storeId: String,
-        completion: (Store) -> Unit
-    ) {
+    private suspend fun fetchStore(storeId: String, completion: (Store) -> Unit) {
         try {
             getStoreByIdUseCase(getUrlFor("hermes/store", storeId = storeId)).collect { result ->
                 result.onSuccess { storeDto ->
@@ -351,15 +344,14 @@ class ChatViewModel @Inject constructor(
      * @param e The exception to be handled.
      * @param isTyping A boolean indicating whether the typing state should be updated.
      */
-    private fun handleError(
-        exception: Exception,
-        isTyping: Boolean = false
-    ) {
+    private fun handleError(exception: Exception, isTyping: Boolean = false) {
         Log.e(TAG, "Error: ${exception.message}")
         _isTyping.value = isTyping
-        val errorMessage = ChatMessage(
-            isUser = false, firstMessage = exception.message.orEmpty(), products = null, secondMessage = null, optionalProducts = null
-        )
+        val errorMessage = ChatMessage(isUser = false,
+                                       firstMessage = exception.message.orEmpty(),
+                                       products = null,
+                                       secondMessage = null,
+                                       optionalProducts = null)
         _gptMessages.value += errorMessage
         addChatMessage(errorMessage)
     }

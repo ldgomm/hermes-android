@@ -13,8 +13,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthenticationServiceable {
 
-    fun postClient(
-        endpoint: String,
-        request: PostClientRequest
-    ): Flow<Result<LoginResponse>>
+    fun postClient(endpoint: String, request: PostClientRequest): Flow<Result<LoginResponse>>
 }
