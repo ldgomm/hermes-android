@@ -1,6 +1,5 @@
 package com.premierdarkcoffee.sales.hermes.root.navigation.route
 
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -19,12 +18,10 @@ import com.premierdarkcoffee.sales.hermes.root.navigation.ProductRoute
 import com.premierdarkcoffee.sales.hermes.root.util.function.sharedViewModel
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 
-fun NavGraphBuilder.productRoute(
-    navController: NavHostController,
-    onNavigateBackToChatViewActionTriggered: () -> Unit,
-    onChatWithStoreButtonClicked: (Store?) -> Unit,
-    popBackStack: () -> Unit
-) {
+fun NavGraphBuilder.productRoute(navController: NavHostController,
+                                 onNavigateBackToChatViewActionTriggered: () -> Unit,
+                                 onChatWithStoreButtonClicked: (Store?) -> Unit,
+                                 popBackStack: () -> Unit) {
 
     composable<ProductRoute> { backStackEntry ->
         val viewModel = backStackEntry.sharedViewModel<ChatViewModel>(navController = navController)

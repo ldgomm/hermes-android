@@ -11,10 +11,7 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Route(
-    @StringRes val resourceId: Int,
-    @Contextual val icon: ImageVector? = null
-)
+sealed class Route(@StringRes val resourceId: Int, @Contextual val icon: ImageVector? = null)
 
 @Serializable
 object AuthenticationRoute

@@ -25,10 +25,7 @@ import javax.inject.Inject
 
 class ProductService @Inject constructor(private val httpClient: HttpClient) : ProductServiceable {
 
-    override fun searchProducts(
-        url: String,
-        request: ClientProductRequest
-    ): Flow<Result<ClientProductResponse>> {
+    override fun searchProducts(url: String, request: ClientProductRequest): Flow<Result<ClientProductResponse>> {
         return flow {
             try {
                 val response: HttpResponse = httpClient.post(url) {
@@ -54,9 +51,7 @@ class ProductService @Inject constructor(private val httpClient: HttpClient) : P
                     }
 
                     else -> {
-                        Log.d(
-                            TAG, "ProductService | Unexpected response status: ${response.status}"
-                        )
+                        Log.d(TAG, "ProductService | Unexpected response status: ${response.status}")
                         emit(Result.failure(Exception("Unexpected response status: ${response.status}")))
                     }
                 }

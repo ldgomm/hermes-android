@@ -52,12 +52,7 @@ import kotlin.math.sqrt
  * @param onProductCardClicked A callback function that is invoked when the product card is clicked.
  */
 @Composable
-fun ProductItemView(
-    user: User,
-    store: Store?,
-    product: Product,
-    onProductCardClicked: (productJson: String) -> Unit
-) {
+fun ProductItemView(user: User, store: Store?, product: Product, onProductCardClicked: (productJson: String) -> Unit) {
     val context = LocalContext.current
 
     // Localized strings for accessibility
@@ -72,74 +67,52 @@ fun ProductItemView(
     }
     val originalPrice = product.price.amount / (1 - product.price.offer.discount / 100.0)
 
-    ElevatedCard(
-        onClick = { onProductCardClicked(Gson().toJson(product)) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 2.dp),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    ElevatedCard(onClick = { onProductCardClicked(Gson().toJson(product)) },
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .padding(vertical = 2.dp),
+                 shape = RoundedCornerShape(16.dp)) {
+        Row(modifier = Modifier
+            .padding(12.dp)
+            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             // Product Image
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(product.image.url)
-                    .crossfade(true)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                contentDescription = "${product.name} image",
-                modifier = Modifier
-                    .size(72.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .semantics { contentDescription = "${product.name} image" },
-                contentScale = ContentScale.Crop
-            )
+            AsyncImage(model = ImageRequest.Builder(context).data(product.image.url).crossfade(true)
+                .diskCachePolicy(CachePolicy.ENABLED).memoryCachePolicy(CachePolicy.ENABLED).build(),
+                       contentDescription = "${product.name} image",
+                       modifier = Modifier
+                           .size(72.dp)
+                           .clip(RoundedCornerShape(8.dp))
+                           .background(MaterialTheme.colorScheme.surfaceVariant)
+                           .semantics { contentDescription = "${product.name} image" },
+                       contentScale = ContentScale.Crop)
 
             Spacer(modifier = Modifier.width(16.dp))
 
             // Product Details
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = product.name.split(" ").take(2).joinToString(" "),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    modifier = Modifier
-                        .padding(bottom = 4.dp)
-                        .semantics { contentDescription = product.name }
-                )
-                Text(
-                    text = product.model,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+            Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
+                Text(text = product.name.split(" ").take(2).joinToString(" "),
+                     style = MaterialTheme.typography.titleMedium,
+                     fontWeight = FontWeight.Bold,
+                     maxLines = 2,
+                     modifier = Modifier
+                         .padding(bottom = 4.dp)
+                         .semantics { contentDescription = product.name })
+                Text(text = product.model,
+                     style = MaterialTheme.typography.bodySmall,
+                     fontWeight = FontWeight.Bold,
+                     color = MaterialTheme.colorScheme.onSurface)
                 store?.let {
                     Row {
-                        Text(
-                            text = it.name,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(end = 4.dp)
-                        )
+                        Text(text = it.name,
+                             style = MaterialTheme.typography.bodySmall,
+                             color = MaterialTheme.colorScheme.onSurface,
+                             modifier = Modifier.padding(end = 4.dp))
                         user.location.let { userLocation ->
-                            store.address?.location?.let { storeLocation ->
+                            store.address.location?.let { storeLocation ->
                                 val distance = haversineDistance(userLocation, storeLocation)
-                                Text(
-                                    text = "$distanceLabel: ${"%.0f".format(distance)} km",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
+                                Text(text = "$distanceLabel: ${"%.0f".format(distance)} km",
+                                     style = MaterialTheme.typography.bodySmall,
+                                     color = MaterialTheme.colorScheme.onSurface)
                             }
                         }
                     }
@@ -149,36 +122,30 @@ fun ProductItemView(
             // Pricing Details
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 if (product.price.offer.isActive) {
-                    Text(
-                        text = "$offerLabel ${product.price.offer.discount}%",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(7.dp))
-                            .background(Color.Red.copy(alpha = 0.7f))
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                            .semantics { contentDescription = "$discountLabel ${product.price.offer.discount}%" }
-                    )
+                    Text(text = "$offerLabel ${product.price.offer.discount}%",
+                         style = MaterialTheme.typography.bodySmall,
+                         color = Color.White,
+                         fontWeight = FontWeight.Bold,
+                         modifier = Modifier
+                             .clip(RoundedCornerShape(7.dp))
+                             .background(Color.Red.copy(alpha = 0.7f))
+                             .padding(horizontal = 8.dp, vertical = 4.dp)
+                             .semantics { contentDescription = "$discountLabel ${product.price.offer.discount}%" })
                 }
-                Text(
-                    text = numberFormat.format(product.price.amount),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .semantics { contentDescription = "$currentPriceLabel ${numberFormat.format(product.price.amount)}" }
-                )
+                Text(text = numberFormat.format(product.price.amount),
+                     style = MaterialTheme.typography.bodyLarge,
+                     color = MaterialTheme.colorScheme.primary,
+                     fontWeight = FontWeight.SemiBold,
+                     modifier = Modifier
+                         .padding(top = 4.dp)
+                         .semantics { contentDescription = "$currentPriceLabel ${numberFormat.format(product.price.amount)}" })
                 if (product.price.offer.isActive) {
-                    Text(
-                        text = numberFormat.format(originalPrice),
-                        style = MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .padding(top = 2.dp)
-                            .semantics { contentDescription = "$originalPriceLabel ${numberFormat.format(originalPrice)}" }
-                    )
+                    Text(text = numberFormat.format(originalPrice),
+                         style = MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough),
+                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                         modifier = Modifier
+                             .padding(top = 2.dp)
+                             .semantics { contentDescription = "$originalPriceLabel ${numberFormat.format(originalPrice)}" })
                 }
             }
         }
@@ -186,18 +153,12 @@ fun ProductItemView(
 }
 
 
-fun haversineDistance(
-    userLocation: GeoPoint,
-    storeLocation: GeoPoint
-): Double {
+fun haversineDistance(userLocation: GeoPoint, storeLocation: GeoPoint): Double {
     val R = 6371.0 // Earth radius in kilometers
     val latDistance = Math.toRadians(storeLocation.coordinates[1] - userLocation.coordinates[1])
     val lonDistance = Math.toRadians(storeLocation.coordinates[0] - userLocation.coordinates[0])
-    val a = sin(latDistance / 2) * sin(latDistance / 2) + cos(Math.toRadians(userLocation.coordinates[1])) * cos(
-        Math.toRadians(
-            storeLocation.coordinates[1]
-        )
-    ) * sin(lonDistance / 2) * sin(lonDistance / 2)
+    val a = sin(latDistance / 2) * sin(latDistance / 2) + cos(Math.toRadians(userLocation.coordinates[1])) * cos(Math.toRadians(
+            storeLocation.coordinates[1])) * sin(lonDistance / 2) * sin(lonDistance / 2)
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c
 }

@@ -76,15 +76,13 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductView(
-    product: Product?,
-    user: User,
-    store: Store?,
-    cart: List<Product>,
-    onAddToCartButtonClicked: (Product) -> Unit,
-    onChatWithStoreIconButtonClicked: (Store?, MessageDto) -> Unit,
-    popBackStack: () -> Unit
-) {
+fun ProductView(product: Product?,
+                user: User,
+                store: Store?,
+                cart: List<Product>,
+                onAddToCartButtonClicked: (Product) -> Unit,
+                onChatWithStoreIconButtonClicked: (Store?, MessageDto) -> Unit,
+                popBackStack: () -> Unit) {
     var showDialog by remember { mutableStateOf(false) }
     var showRequestDialog by remember { mutableStateOf(false) }
 
@@ -113,117 +111,93 @@ fun ProductView(
             }
         })
     }) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())) {
 
             // Main Product Image and Store Image (expandable)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp)
-            ) {
-                AsyncImage(
-                    model = product.image.url,
-                    contentDescription = product.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(500.dp),
-                    contentScale = ContentScale.FillBounds
-                )
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp)) {
+                AsyncImage(model = product.image.url,
+                           contentDescription = product.name,
+                           modifier = Modifier
+                               .fillMaxWidth()
+                               .height(500.dp),
+                           contentScale = ContentScale.FillBounds)
 
                 // Store Image with Expand Effect
                 store?.image?.url?.let { storeImageUrl ->
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .clickable {
-                                isStoreImageExpanded = !isStoreImageExpanded
-                                if (isStoreImageExpanded) {
-                                    coroutineScope.launch {
-                                        delay(3000)
-                                        isStoreImageExpanded = false
-                                    }
+                    Box(modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .clickable {
+                            isStoreImageExpanded = !isStoreImageExpanded
+                            if (isStoreImageExpanded) {
+                                coroutineScope.launch {
+                                    delay(3000)
+                                    isStoreImageExpanded = false
                                 }
                             }
-                    ) {
-                        AsyncImage(
-                            model = storeImageUrl,
-                            contentDescription = store.name,
-                            modifier = Modifier
-                                .padding(imagePadding)
-                                .size(imageSize)
-                                .clip(RoundedCornerShape(cornerShape))
-                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha)),
-                            contentScale = ContentScale.FillBounds
-                        )
+                        }) {
+                        AsyncImage(model = storeImageUrl,
+                                   contentDescription = store.name,
+                                   modifier = Modifier
+                                       .padding(imagePadding)
+                                       .size(imageSize)
+                                       .clip(RoundedCornerShape(cornerShape))
+                                       .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha)),
+                                   contentScale = ContentScale.FillBounds)
                     }
                 }
 
-                Text(
-                    text = if (isStoreImageExpanded) store?.name ?: "" else product.category.subclass,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(end = 16.dp, bottom = 12.dp)
-                        .background(Color.Gray.copy(alpha = 0.7f), RoundedCornerShape(10.dp))
-                        .padding(horizontal = 10.dp, vertical = 6.dp)
-                        .align(Alignment.BottomEnd),
-                    textAlign = TextAlign.End
-                )
+                Text(text = if (isStoreImageExpanded) store?.name ?: "" else product.category.subclass,
+                     style = MaterialTheme.typography.labelSmall,
+                     color = Color.White,
+                     modifier = Modifier
+                         .padding(end = 16.dp, bottom = 12.dp)
+                         .background(Color.Gray.copy(alpha = 0.7f), RoundedCornerShape(10.dp))
+                         .padding(horizontal = 10.dp, vertical = 6.dp)
+                         .align(Alignment.BottomEnd),
+                     textAlign = TextAlign.End)
             }
 
             // Label, publisher, year
             SectionView(title = stringResource(id = R.string.label_label)) {
-                Text(
-                    text = product.label ?: "",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
+                Text(text = product.label ?: "",
+                     style = MaterialTheme.typography.bodySmall,
+                     color = MaterialTheme.colorScheme.onSecondaryContainer)
             }
 
 
             if (product.year != null) {
                 SectionView(title = stringResource(id = R.string.owner_label)) {
-                    Text(
-                        text = "${product.owner}, ${product.year}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
+                    Text(text = "${product.owner}, ${product.year}",
+                         style = MaterialTheme.typography.bodySmall,
+                         color = MaterialTheme.colorScheme.onSecondaryContainer)
                 }
             } else {
                 SectionView(title = stringResource(id = R.string.owner_label)) {
-                    Text(
-                        text = product.owner ?: "",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
+                    Text(text = product.owner ?: "",
+                         style = MaterialTheme.typography.bodySmall,
+                         color = MaterialTheme.colorScheme.onSecondaryContainer)
                 }
             }
 
             if (product.model.length > 3) {
                 SectionView(title = stringResource(id = R.string.model_label)) {
-                    Text(
-                        text = product.model,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
+                    Text(text = product.model,
+                         style = MaterialTheme.typography.bodySmall,
+                         color = MaterialTheme.colorScheme.onSecondaryContainer)
                 }
             }
 
 // Description
             SectionView(title = stringResource(id = R.string.description_label)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = product.description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = product.description,
+                         style = MaterialTheme.typography.bodySmall,
+                         color = MaterialTheme.colorScheme.onSecondaryContainer)
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }
@@ -231,52 +205,40 @@ fun ProductView(
 
             product.overview.let { overviewList ->
                 if (overviewList.isNotEmpty()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                            .padding(horizontal = 16.dp)
-                    ) {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp)) {
                         overviewList.forEach { info ->
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .width(300.dp)
-                                    .padding(end = 16.dp),
-                                shape = MaterialTheme.shapes.medium,
-                                elevation = CardDefaults.elevatedCardElevation(4.dp)
-                            ) {
+                            ElevatedCard(modifier = Modifier
+                                .width(300.dp)
+                                .padding(end = 16.dp),
+                                         shape = MaterialTheme.shapes.medium,
+                                         elevation = CardDefaults.elevatedCardElevation(4.dp)) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     // Image with accessibility support
-                                    AsyncImage(
-                                        model = info.image.url,
-                                        contentDescription = info.title,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(180.dp)
-                                            .clip(MaterialTheme.shapes.medium)
-                                            .padding(bottom = 8.dp),
-                                        contentScale = ContentScale.Crop
-                                    )
+                                    AsyncImage(model = info.image.url,
+                                               contentDescription = info.title,
+                                               modifier = Modifier
+                                                   .fillMaxWidth()
+                                                   .height(180.dp)
+                                                   .clip(MaterialTheme.shapes.medium)
+                                                   .padding(bottom = 8.dp),
+                                               contentScale = ContentScale.Crop)
                                     // Title
-                                    Text(
-                                        text = info.title,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(bottom = 4.dp)
-                                    )
+                                    Text(text = info.title,
+                                         style = MaterialTheme.typography.titleMedium,
+                                         fontWeight = FontWeight.Bold,
+                                         modifier = Modifier.padding(bottom = 4.dp))
                                     // Subtitle
-                                    Text(
-                                        text = info.subtitle,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        modifier = Modifier.padding(bottom = 4.dp)
-                                    )
+                                    Text(text = info.subtitle,
+                                         style = MaterialTheme.typography.bodyMedium,
+                                         modifier = Modifier.padding(bottom = 4.dp))
                                     // Description
-                                    Text(
-                                        text = info.description,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        maxLines = 10,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
+                                    Text(text = info.description,
+                                         style = MaterialTheme.typography.bodySmall,
+                                         maxLines = 10,
+                                         overflow = TextOverflow.Ellipsis)
                                 }
                             }
                         }
@@ -286,22 +248,11 @@ fun ProductView(
 
 
             SectionView(title = stringResource(id = R.string.details_label)) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    ProductDetailRow(
-                        label = stringResource(id = R.string.price_label),
-                        value = "${product.price.amount} ${product.price.currency}"
-                    )
-                    ProductDetailRow(
-                        label = stringResource(id = R.string.stock_label),
-                        value = product.stock.toString()
-                    )
-                    ProductDetailRow(
-                        label = stringResource(id = R.string.origin_label),
-                        value = product.origin
-                    )
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    ProductDetailRow(label = stringResource(id = R.string.price_label),
+                                     value = "${product.price.amount} ${product.price.currency}")
+                    ProductDetailRow(label = stringResource(id = R.string.stock_label), value = product.stock.toString())
+                    ProductDetailRow(label = stringResource(id = R.string.origin_label), value = product.origin)
                 }
             }
 
@@ -309,37 +260,22 @@ fun ProductView(
 
             product.specifications?.let { specifications ->
                 SectionView(title = stringResource(id = R.string.specifications_label)) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        ProductDetailRow(
-                            label = stringResource(id = R.string.colours_label),
-                            value = specifications.colours.joinToString(", ")
-                        )
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                        ProductDetailRow(label = stringResource(id = R.string.colours_label),
+                                         value = specifications.colours.joinToString(", "))
                         specifications.finished?.let { finished ->
-                            ProductDetailRow(
-                                label = stringResource(id = R.string.finished_label),
-                                value = finished
-                            )
+                            ProductDetailRow(label = stringResource(id = R.string.finished_label), value = finished)
                         }
                         specifications.inBox?.let { inBox ->
-                            ProductDetailRow(
-                                label = stringResource(id = R.string.in_box_label),
-                                value = inBox.joinToString(", ")
-                            )
+                            ProductDetailRow(label = stringResource(id = R.string.in_box_label), value = inBox.joinToString(", "))
                         }
                         specifications.size?.let { size ->
-                            ProductDetailRow(
-                                label = stringResource(id = R.string.size_label),
-                                value = "${size.width}x${size.height}x${size.depth} ${size.unit}"
-                            )
+                            ProductDetailRow(label = stringResource(id = R.string.size_label),
+                                             value = "${size.width}x${size.height}x${size.depth} ${size.unit}")
                         }
                         specifications.weight?.let { weight ->
-                            ProductDetailRow(
-                                label = stringResource(id = R.string.weight_label),
-                                value = "${weight.weight} ${weight.unit}"
-                            )
+                            ProductDetailRow(label = stringResource(id = R.string.weight_label),
+                                             value = "${weight.weight} ${weight.unit}")
                         }
                     }
                 }
@@ -347,37 +283,28 @@ fun ProductView(
 
             product.warranty?.let { warranty ->
                 SectionView(title = stringResource(id = R.string.warranty_label)) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        ProductDetailRow(
-                            label = stringResource(id = R.string.warranty_duration_label, warranty.months),
-                            value = warranty.details.joinToString(", ")
-                        )
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                        ProductDetailRow(label = stringResource(id = R.string.warranty_duration_label, warranty.months),
+                                         value = warranty.details.joinToString(", "))
                     }
                 }
             }
 
             product.legal?.let { legal ->
                 SectionView(title = stringResource(id = R.string.legal_label)) {
-                    Text(
-                        text = legal,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.semantics { contentDescription = legal }
-                    )
+                    Text(text = legal,
+                         style = MaterialTheme.typography.bodySmall,
+                         color = MaterialTheme.colorScheme.onSecondaryContainer,
+                         modifier = Modifier.semantics { contentDescription = legal })
                 }
             }
 
             product.warning?.let { warning ->
                 SectionView(title = stringResource(id = R.string.warning_label)) {
-                    Text(
-                        text = warning,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.semantics { contentDescription = warning }
-                    )
+                    Text(text = warning,
+                         style = MaterialTheme.typography.bodySmall,
+                         color = MaterialTheme.colorScheme.onSecondaryContainer,
+                         modifier = Modifier.semantics { contentDescription = warning })
                 }
             }
 
@@ -407,24 +334,20 @@ fun ProductView(
 
     if (showRequestDialog) {
         AlertDialog(onDismissRequest = { showRequestDialog = false }, title = {
-            Text(
-                text = stringResource(id = R.string.request_product_from_store, product.name, store?.name ?: ""),
-                style = MaterialTheme.typography.titleLarge
-            )
+            Text(text = stringResource(id = R.string.request_product_from_store, product.name, store?.name ?: ""),
+                 style = MaterialTheme.typography.titleLarge)
         }, text = {
             Text(
-                text = stringResource(id = R.string.confirm_request_product),
+                    text = stringResource(id = R.string.confirm_request_product),
             )
         }, confirmButton = {
             Button(onClick = {
                 showRequestDialog = false
                 product.storeId?.let {
-                    val message = MessageDto(
-                        text = "Hola, ${store?.name}, $messageToStore: ${product.name}",
-                        clientId = FirebaseAuth.getInstance().uid ?: "",
-                        storeId = product.storeId,
-                        product = Gson().toJson(product)
-                    )
+                    val message = MessageDto(text = "Hola, ${store?.name}, $messageToStore: ${product.name}",
+                                             clientId = FirebaseAuth.getInstance().uid ?: "",
+                                             storeId = product.storeId,
+                                             product = Gson().toJson(product))
                     onChatWithStoreIconButtonClicked(store, message)
                 }
             }) {
@@ -440,26 +363,15 @@ fun ProductView(
 }
 
 @Composable
-fun ProductDetailRow(
-    label: String,
-    value: String
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
+fun ProductDetailRow(label: String, value: String) {
+    Row(modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+        verticalAlignment = Alignment.CenterVertically) {
         // Label
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.onSecondaryContainer
-        )
+        Text(text = label,
+             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+             color = MaterialTheme.colorScheme.onSecondaryContainer)
         // Value
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer
-        )
+        Text(text = value, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSecondaryContainer)
     }
 }
