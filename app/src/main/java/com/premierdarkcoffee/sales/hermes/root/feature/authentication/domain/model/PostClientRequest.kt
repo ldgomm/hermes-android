@@ -11,7 +11,4 @@ import com.premierdarkcoffee.sales.hermes.root.feature.authentication.data.remot
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PostClientRequest(
-    val key: String? = null,
-    val client: ClientDto
-)
+data class PostClientRequest(val key: String? = null, val client: ClientDto)

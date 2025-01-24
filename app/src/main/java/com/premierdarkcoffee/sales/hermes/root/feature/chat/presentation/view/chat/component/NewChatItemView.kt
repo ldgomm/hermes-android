@@ -33,80 +33,57 @@ import androidx.compose.ui.unit.dp
 import com.premierdarkcoffee.sales.hermes.R
 
 @Composable
-fun NewChatItemView(
-    imageRes: Int,
-    title: String,
-    subtitle: String,
-    onNewChatButtonClicked: () -> Unit
-) {
+fun NewChatItemView(imageRes: Int, title: String, subtitle: String, onNewChatButtonClicked: () -> Unit) {
     // Localized strings for accessibility
     val chatImageDescription = stringResource(id = R.string.chat_image_description)
     val verifiedIconDescription = stringResource(id = R.string.verified_icon_description)
 
-    Row(
-        modifier = Modifier
-            .clickable { onNewChatButtonClicked() }
-            .fillMaxWidth()
-            .background(
-                color = Color.LightGray.copy(alpha = 0.05f),
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier
+        .clickable { onNewChatButtonClicked() }
+        .fillMaxWidth()
+        .background(color = Color.LightGray.copy(alpha = 0.05f), shape = RoundedCornerShape(8.dp))
+        .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically) {
         // Image with accessible content description
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = chatImageDescription,
-            modifier = Modifier
-                .size(50.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
-                    shape = CircleShape
-                )
-                .padding(8.dp),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface)
-        )
+        Image(painter = painterResource(id = imageRes),
+              contentDescription = chatImageDescription,
+              modifier = Modifier
+                  .size(50.dp)
+                  .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f), shape = CircleShape)
+                  .padding(8.dp),
+              colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface))
 
         Spacer(modifier = Modifier.width(8.dp))
 
         // Title and subtitle with verified icon
         Column(modifier = Modifier.weight(1f)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 // Title
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.semantics {
-                        contentDescription = title
-                    }
-                )
+                Text(text = title,
+                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                     maxLines = 1,
+                     overflow = TextOverflow.Ellipsis,
+                     modifier = Modifier.semantics {
+                         contentDescription = title
+                     })
 
                 // Verified Icon
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.verified),
-                    contentDescription = verifiedIconDescription,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .offset(x = 6.dp)
-                )
+                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.verified),
+                     contentDescription = verifiedIconDescription,
+                     tint = MaterialTheme.colorScheme.primary,
+                     modifier = Modifier
+                         .size(20.dp)
+                         .offset(x = 6.dp))
             }
 
             // Subtitle
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.semantics {
-                    contentDescription = subtitle
-                }
-            )
+            Text(text = subtitle,
+                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
+                 maxLines = 2,
+                 overflow = TextOverflow.Ellipsis,
+                 modifier = Modifier.semantics {
+                     contentDescription = subtitle
+                 })
         }
     }
 }
