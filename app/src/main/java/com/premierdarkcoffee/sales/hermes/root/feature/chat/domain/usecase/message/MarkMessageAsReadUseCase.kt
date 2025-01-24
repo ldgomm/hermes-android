@@ -15,10 +15,7 @@ import javax.inject.Inject
 
 class MarkMessageAsReadUseCase @Inject constructor(private val repositoriable: MessageRepositoriable) {
 
-    suspend operator fun invoke(
-        message: MessageEntity,
-        onMessageUpdated: () -> Unit
-    ) {
+    suspend operator fun invoke(message: MessageEntity, onMessageUpdated: () -> Unit) {
         withContext(Dispatchers.IO) {
             repositoriable.markMessageAsRead(message, onMessageUpdated)
         }

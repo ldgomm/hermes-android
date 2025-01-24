@@ -7,13 +7,9 @@ package com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.mes
 //  Created by José Ruiz on 12/7/24.
 //
 
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.message.AttachmentEntity
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.message.AttachmentTypeEntity
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.message.MessageEntity
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.message.MessageStatusEntity
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.message.MessageTypeEntity
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.Attachment
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.AttachmentType
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.Message
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageStatus
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType

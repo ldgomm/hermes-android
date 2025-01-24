@@ -21,10 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.premierdarkcoffee.sales.hermes.root.util.function.shouldShowNavigationBar
 
 @Composable
-fun MainView(
-    navController: NavHostController,
-    startDestination: Any
-) {
+fun MainView(navController: NavHostController, startDestination: Any) {
     var user by remember { mutableStateOf(FirebaseAuth.getInstance().currentUser) }
 
     FirebaseAuth.getInstance().addAuthStateListener { auth ->
@@ -38,23 +35,21 @@ fun MainView(
                 items.forEach { item ->
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
-                    NavigationBarItem(
-                        icon = {
-                            Icon(imageVector = item.icon!!, contentDescription = stringResource(id = item.resourceId))
-                        },
-                        label = { Text(text = stringResource(item.resourceId)) },
-                        selected = currentDestination?.hierarchy?.any { it == item } == true,
-                        onClick = {
-                            navController.navigate(item) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        modifier = Modifier
-                    )
+                    NavigationBarItem(icon = {
+                        Icon(imageVector = item.icon!!, contentDescription = stringResource(id = item.resourceId))
+                    },
+                                      label = { Text(text = stringResource(item.resourceId)) },
+                                      selected = currentDestination?.hierarchy?.any { it == item } == true,
+                                      onClick = {
+                                          navController.navigate(item) {
+                                              popUpTo(navController.graph.findStartDestination().id) {
+                                                  saveState = true
+                                              }
+                                              launchSingleTop = true
+                                              restoreState = true
+                                          }
+                                      },
+                                      modifier = Modifier)
                 }
             }
         }

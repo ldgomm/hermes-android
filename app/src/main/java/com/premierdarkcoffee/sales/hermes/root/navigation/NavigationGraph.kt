@@ -15,11 +15,7 @@ import com.premierdarkcoffee.sales.hermes.root.navigation.route.user.editUserRou
 import com.premierdarkcoffee.sales.hermes.root.navigation.route.user.userRoute
 
 @Composable
-fun NavigationGraph(
-    navController: NavHostController,
-    startDestination: Any,
-    modifier: Modifier = Modifier
-) {
+fun NavigationGraph(navController: NavHostController, startDestination: Any, modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
         authenticationRoute(onNavigateToProductsViewTriggered = {
             navController.popBackStack()
@@ -36,15 +32,11 @@ fun NavigationGraph(
             navController.navigate(ProductRoute(productJson))
         })
 
-        searchRoute(navController = navController,
-                    onProductCardClicked = { productJson ->
-                        navController.navigate(ProductRoute(productJson))
-                    },
-                    onNavigateToStoreMarkerClicked = { storeJson ->
-                        navController.navigate(StoreRoute(storeJson))
-                    },
-                    popBackStack = { navController.popBackStack() },
-                    onEditUserButtonClicked = { navController.navigate(EditUserRoute) })
+        searchRoute(navController = navController, onProductCardClicked = { productJson ->
+            navController.navigate(ProductRoute(productJson))
+        }, onNavigateToStoreMarkerClicked = { storeJson ->
+            navController.navigate(StoreRoute(storeJson))
+        }, popBackStack = { navController.popBackStack() }, onEditUserButtonClicked = { navController.navigate(EditUserRoute) })
 
         productRoute(navController = navController, onNavigateBackToChatViewActionTriggered = {
             navController.popBackStack()

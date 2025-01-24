@@ -90,15 +90,11 @@ class MessageRepository @Inject constructor(private val databas: MainDatabase) :
 //        callback(localMessages)
 //    }
 
-    override suspend fun markMessageAsRead(
-        message: MessageEntity,
-        onMessageUpdated: () -> Unit
-    ) {
+    override suspend fun markMessageAsRead(message: MessageEntity, onMessageUpdated: () -> Unit) {
         withContext(Dispatchers.IO) {
             try {
-                val query = db.whereEqualTo("clientId", message.clientId)
-                    .whereEqualTo("storeId", message.storeId).whereEqualTo("date", message.date)
-                    .limit(1)
+                val query = db.whereEqualTo("clientId", message.clientId).whereEqualTo("storeId", message.storeId)
+                    .whereEqualTo("date", message.date).limit(1)
                 val querySnapshot = query.get().await()
                 if (!querySnapshot.isEmpty) {
                     val document = querySnapshot.documents[0]

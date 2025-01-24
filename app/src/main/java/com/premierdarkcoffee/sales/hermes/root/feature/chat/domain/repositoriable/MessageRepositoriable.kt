@@ -12,8 +12,5 @@ interface MessageRepositoriable {
 
 //    suspend fun fetchLocalMessages(callback: (List<Message>) -> Unit)
 
-    suspend fun markMessageAsRead(
-        message: MessageEntity,
-        onMessageUpdated: () -> Unit
-    )
+    suspend fun markMessageAsRead(message: MessageEntity, onMessageUpdated: () -> Unit)
 }
