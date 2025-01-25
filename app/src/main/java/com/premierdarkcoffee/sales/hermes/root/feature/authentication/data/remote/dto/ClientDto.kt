@@ -12,12 +12,10 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.stor
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ClientDto(
-    val id: String,
-    val name: String,
-    val email: String,
-    val phone: String,
-    val image: ImageDto,
-    val location: GeoPointDto,
-    val createdAt: Long
-)
+data class ClientDto(val id: String,
+                     val name: String,
+                     val email: String,
+                     val phone: String,
+                     val image: ImageDto,
+                     val location: GeoPointDto,
+                     val createdAt: Long)

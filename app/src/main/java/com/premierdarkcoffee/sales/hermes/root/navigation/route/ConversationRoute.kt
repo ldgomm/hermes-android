@@ -17,11 +17,9 @@ import com.premierdarkcoffee.sales.hermes.root.navigation.ConversationRoute
 import com.premierdarkcoffee.sales.hermes.root.util.function.sharedViewModel
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 
-fun NavGraphBuilder.conversationRoute(
-    navController: NavHostController,
-    onProductCardClicked: (product: String) -> Unit,
-    popBackStack: () -> Unit
-) {
+fun NavGraphBuilder.conversationRoute(navController: NavHostController,
+                                      onProductCardClicked: (product: String) -> Unit,
+                                      popBackStack: () -> Unit) {
 
     composable<ConversationRoute> { backStackEntry ->
         val viewModel = backStackEntry.sharedViewModel<ChatViewModel>(navController = navController)
@@ -46,15 +44,13 @@ fun NavGraphBuilder.conversationRoute(
 //            viewModel.getStores(messages.map { it.storeId })
 //        }
 
-        ConversationView(
-            user = user,
-            store = store,
-            messages = storeMessages,
-            onSendMessageToStoreButtonClicked = viewModel::sendMessageToStore,
-            markMessageAsReadLaunchedEffect = viewModel::markMessageAsReadLaunchedEffect,
-            onProductCardClicked = onProductCardClicked,
-            popBackStack = popBackStack
-        )
+        ConversationView(user = user,
+                         store = store,
+                         messages = storeMessages,
+                         onSendMessageToStoreButtonClicked = viewModel::sendMessageToStore,
+                         markMessageAsReadLaunchedEffect = viewModel::markMessageAsReadLaunchedEffect,
+                         onProductCardClicked = onProductCardClicked,
+                         popBackStack = popBackStack)
 
     }
 }

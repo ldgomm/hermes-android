@@ -48,58 +48,38 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun ConversationItemView(
-    store: Store?,
-    message: Message,
-    sentOrDeliveredCount: Int,
-    onConversationItemViewClicked: () -> Unit
-) {
+fun ConversationItemView(store: Store?, message: Message, sentOrDeliveredCount: Int, onConversationItemViewClicked: () -> Unit) {
     // Localized strings for accessibility
-    val storeImageDescription = stringResource(
-        id = R.string.store_image_description,
-        store?.name ?: stringResource(id = R.string.no_store_name)
-    )
+    val storeImageDescription =
+        stringResource(id = R.string.store_image_description, store?.name ?: stringResource(id = R.string.no_store_name))
     val noStoreNameDescription = stringResource(id = R.string.no_store_name)
     val messageDateDescription = stringResource(id = R.string.message_date_label)
 
-    Row(
-        modifier = Modifier
-            .padding(vertical = 4.dp)
-            .clickable { onConversationItemViewClicked() }
-            .fillMaxWidth()
-            .background(
-                color = Color.LightGray.copy(alpha = 0.05f),
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier
+        .padding(vertical = 4.dp)
+        .clickable { onConversationItemViewClicked() }
+        .fillMaxWidth()
+        .background(color = Color.LightGray.copy(alpha = 0.05f), shape = RoundedCornerShape(8.dp))
+        .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically) {
         // Store icon
         store?.let {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(store.image.url)
-                    .crossfade(true)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                contentDescription = storeImageDescription,
-                modifier = Modifier
-                    .size(54.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentScale = ContentScale.Crop
-            )
+            AsyncImage(model = ImageRequest.Builder(LocalContext.current).data(store.image.url).crossfade(true)
+                .diskCachePolicy(CachePolicy.ENABLED).memoryCachePolicy(CachePolicy.ENABLED).build(),
+                       contentDescription = storeImageDescription,
+                       modifier = Modifier
+                           .size(54.dp)
+                           .clip(CircleShape)
+                           .background(MaterialTheme.colorScheme.surfaceVariant),
+                       contentScale = ContentScale.Crop)
         } ?: run {
-            Image(
-                painter = painterResource(id = R.drawable.storefront),
-                contentDescription = noStoreNameDescription,
-                modifier = Modifier
-                    .size(54.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(12.dp)
-            )
+            Image(painter = painterResource(id = R.drawable.storefront),
+                  contentDescription = noStoreNameDescription,
+                  modifier = Modifier
+                      .size(54.dp)
+                      .clip(CircleShape)
+                      .background(MaterialTheme.colorScheme.surfaceVariant)
+                      .padding(12.dp))
         }
 
         Spacer(modifier = Modifier.width(10.dp))
@@ -107,54 +87,38 @@ fun ConversationItemView(
         // Message content
         Column(modifier = Modifier.weight(1f)) {
             // Store Name
-            Text(
-                text = store?.name ?: stringResource(id = R.string.no_store_name),
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.semantics { contentDescription = store?.name ?: noStoreNameDescription }
-            )
+            Text(text = store?.name ?: stringResource(id = R.string.no_store_name),
+                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                 modifier = Modifier.semantics { contentDescription = store?.name ?: noStoreNameDescription })
 
             // Message Text
-            Text(
-                text = message.text,
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.semantics { contentDescription = message.text }
-            )
+            Text(text = message.text,
+                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
+                 maxLines = 2,
+                 overflow = TextOverflow.Ellipsis,
+                 modifier = Modifier.semantics { contentDescription = message.text })
         }
 
         Spacer(modifier = Modifier.width(10.dp))
 
         // Date and Badge
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             // Date
-            Text(
-                text = message.date.formatShortDate(),
-                style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray),
-                modifier = Modifier
-                    .padding(end = 10.dp)
-                    .semantics { contentDescription = "$messageDateDescription: ${message.date.formatShortDate()}" }
-            )
+            Text(text = message.date.formatShortDate(),
+                 style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray),
+                 modifier = Modifier
+                     .padding(end = 10.dp)
+                     .semantics { contentDescription = "$messageDateDescription: ${message.date.formatShortDate()}" })
 
             // Message Count Badge
             if (sentOrDeliveredCount > 0) {
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .background(
-                            color = Color.DarkGray.copy(alpha = 0.7f),
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "$sentOrDeliveredCount",
-                        style = MaterialTheme.typography.labelSmall.copy(color = Color.White),
-                        modifier = Modifier.semantics { contentDescription = "$sentOrDeliveredCount messages pending" }
-                    )
+                Box(modifier = Modifier
+                    .size(24.dp)
+                    .background(color = Color.DarkGray.copy(alpha = 0.7f), shape = CircleShape),
+                    contentAlignment = Alignment.Center) {
+                    Text(text = "$sentOrDeliveredCount",
+                         style = MaterialTheme.typography.labelSmall.copy(color = Color.White),
+                         modifier = Modifier.semantics { contentDescription = "$sentOrDeliveredCount messages pending" })
                 }
             }
         }

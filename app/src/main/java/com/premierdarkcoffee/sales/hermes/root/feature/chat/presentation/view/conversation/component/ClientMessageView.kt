@@ -61,13 +61,11 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun ClientMessageView(
-    user: User,
-    store: Store?,
-    message: Message,
-    product: Product?,
-    onProductCardClicked: (product: String) -> Unit
-) {
+fun ClientMessageView(user: User,
+                      store: Store?,
+                      message: Message,
+                      product: Product?,
+                      onProductCardClicked: (product: String) -> Unit) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(true) }
 
@@ -80,122 +78,92 @@ fun ClientMessageView(
     val messageDateLabel = stringResource(id = R.string.message_date_label)
 
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 4.dp)
-            .padding(top = 4.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.End
-    ) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(end = 4.dp)
+        .padding(top = 4.dp),
+           verticalArrangement = Arrangement.Center,
+           horizontalAlignment = Alignment.End) {
         when (message.type) {
             TEXT -> {
                 Spacer(Modifier.padding(horizontal = 60.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
+                Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .wrapContentWidth(Alignment.End),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.End
-                    ) {
+                    verticalAlignment = Alignment.CenterVertically) {
+                    Column(modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .wrapContentWidth(Alignment.End),
+                           verticalArrangement = Arrangement.Center,
+                           horizontalAlignment = Alignment.End) {
                         // Message Bubble with Accessibility
-                        Text(
-                            text = message.text,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .clickable {
-                                    if (product != null) {
-                                        expanded = !expanded
-                                    }
-                                }
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(
-                                        if (isSystemInDarkTheme()) 0.2f else 0.9f
-                                    )
-                                )
-                                .padding(8.dp)
-                                .semantics { contentDescription = "$textMessageLabel: ${message.text}" },
-                            color = Color.White,
-                            textAlign = TextAlign.Start
-                        )
+                        Text(text = message.text,
+                             style = MaterialTheme.typography.bodyLarge,
+                             modifier = Modifier
+                                 .clip(RoundedCornerShape(12.dp))
+                                 .clickable {
+                                     if (product != null) {
+                                         expanded = !expanded
+                                     }
+                                 }
+                                 .background(MaterialTheme.colorScheme.primary.copy(if (isSystemInDarkTheme()) 0.2f else 0.9f))
+                                 .padding(8.dp)
+                                 .semantics { contentDescription = "$textMessageLabel: ${message.text}" },
+                             color = Color.White,
+                             textAlign = TextAlign.Start)
 
                         // Message Date
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                        Row(verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = message.date.formatMessageDate(context),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                                modifier = Modifier.semantics {
-                                    contentDescription = messageDateLabel
-                                }
-                            )
+                            modifier = Modifier.fillMaxWidth()) {
+                            Text(text = message.date.formatMessageDate(context),
+                                 style = MaterialTheme.typography.bodySmall,
+                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                 modifier = Modifier.semantics {
+                                     contentDescription = messageDateLabel
+                                 })
                         }
                     }
                 }
             }
 
             IMAGE -> {
-                Text(
-                    text = imageMessageLabel,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.semantics { contentDescription = imageMessageLabel }
-                )
+                Text(text = imageMessageLabel,
+                     style = MaterialTheme.typography.bodyLarge,
+                     modifier = Modifier.semantics { contentDescription = imageMessageLabel })
             }
 
             VIDEO -> {
-                Text(
-                    text = videoMessageLabel,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.semantics { contentDescription = videoMessageLabel }
-                )
+                Text(text = videoMessageLabel,
+                     style = MaterialTheme.typography.bodyLarge,
+                     modifier = Modifier.semantics { contentDescription = videoMessageLabel })
             }
 
             AUDIO -> {
-                Text(
-                    text = audioMessageLabel,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.semantics { contentDescription = audioMessageLabel }
-                )
+                Text(text = audioMessageLabel,
+                     style = MaterialTheme.typography.bodyLarge,
+                     modifier = Modifier.semantics { contentDescription = audioMessageLabel })
             }
 
             FILE -> {
-                Text(
-                    text = fileMessageLabel,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.semantics { contentDescription = fileMessageLabel }
-                )
+                Text(text = fileMessageLabel,
+                     style = MaterialTheme.typography.bodyLarge,
+                     modifier = Modifier.semantics { contentDescription = fileMessageLabel })
             }
         }
 
         // Animated Visibility for Product Details
-        AnimatedVisibility(
-            visible = expanded && product != null,
-            enter = expandVertically(animationSpec = tween(durationMillis = 500)) + fadeIn(),
-            exit = shrinkVertically(animationSpec = tween(durationMillis = 500)) + fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
+        AnimatedVisibility(visible = expanded && product != null,
+                           enter = expandVertically(animationSpec = tween(durationMillis = 500)) + fadeIn(),
+                           exit = shrinkVertically(animationSpec = tween(durationMillis = 500)) + fadeOut()) {
+            Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+                verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.fillMaxWidth(0.9f)) {
                     product?.let {
-                        ProductItemView(
-                            user = user,
-                            store = store,
-                            product = product,
-                            onProductCardClicked = onProductCardClicked
-                        )
+                        ProductItemView(user = user,
+                                        store = store,
+                                        product = product,
+                                        onProductCardClicked = onProductCardClicked)
                     }
                 }
             }
@@ -226,27 +194,21 @@ fun Long.formatMessageDate(context: Context): String {
         diff < oneDay && currentDayOfYear == messageDayOfYear -> {
             val is24Hour = DateFormat.is24HourFormat(context)
             val pattern = if (is24Hour) "HH:mm" else "hh:mm a"
-            val dateFormatter = SimpleDateFormat(
-                pattern, Locale.getDefault()
-            )
+            val dateFormatter = SimpleDateFormat(pattern, Locale.getDefault())
             dateFormatter.format(Date(this))
         }
 
         diff < 2 * oneDay && currentDayOfYear - messageDayOfYear == 1 -> {
             val is24Hour = DateFormat.is24HourFormat(context)
             val pattern = if (is24Hour) "HH:mm" else "hh:mm a"
-            val dateFormatter = SimpleDateFormat(
-                pattern, Locale.getDefault()
-            )
+            val dateFormatter = SimpleDateFormat(pattern, Locale.getDefault())
             dateFormatter.format(Date(this))
         }
 
         else -> {
             val is24Hour = DateFormat.is24HourFormat(context)
             val pattern = if (is24Hour) "MMM d, yyyy, HH:mm" else "MMM d, yyyy, hh:mm a"
-            val dateFormatter = SimpleDateFormat(
-                pattern, Locale.getDefault()
-            )
+            val dateFormatter = SimpleDateFormat(pattern, Locale.getDefault())
             dateFormatter.format(Date(this))
         }
     }
@@ -276,9 +238,7 @@ fun Long.formatConversationDate(context: Context): String {
             val date = Date(this)
             val is24Hour = DateFormat.is24HourFormat(context)
             val pattern = if (is24Hour) "MMM d, yyyy, HH:mm" else "MMM d, yyyy, hh:mm a"
-            val dateFormatter = SimpleDateFormat(
-                pattern, Locale.getDefault()
-            )
+            val dateFormatter = SimpleDateFormat(pattern, Locale.getDefault())
             dateFormatter.format(date)
         }
     }
@@ -303,9 +263,7 @@ fun Long.formatDayDate(context: Context): String {
         else -> {
             val is24Hour = DateFormat.is24HourFormat(context)
             val pattern = if (is24Hour) "MMM d, yyyy" else "MMM d, yyyy"
-            val dateFormatter = SimpleDateFormat(
-                pattern, Locale.getDefault()
-            )
+            val dateFormatter = SimpleDateFormat(pattern, Locale.getDefault())
             dateFormatter.format(Date(this))
         }
     }
