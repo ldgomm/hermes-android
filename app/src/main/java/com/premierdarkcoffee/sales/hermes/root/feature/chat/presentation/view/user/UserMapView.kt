@@ -35,48 +35,32 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.premierdarkcoffee.sales.hermes.R
 
 @Composable
-fun UserMapView(
-    location: LatLng,
-    modifier: Modifier = Modifier
-) {
+fun UserMapView(location: LatLng, modifier: Modifier = Modifier) {
     var isMapLoaded by remember { mutableStateOf(false) }
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(location, 15f)
     }
 
-    Column(
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
+    Column(verticalArrangement = Arrangement.Bottom, horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         Box(modifier = Modifier.fillMaxSize()) {
             // Google Map
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState,
-                onMapLoaded = { isMapLoaded = true }
-            ) {
-                Marker(
-                    state = MarkerState(location),
-                    title = stringResource(R.string.you_are_here),
-                    snippet = stringResource(R.string.current_location_marker)
-                )
+            GoogleMap(modifier = Modifier.fillMaxSize(),
+                      cameraPositionState = cameraPositionState,
+                      onMapLoaded = { isMapLoaded = true }) {
+                Marker(state = MarkerState(location),
+                       title = stringResource(R.string.you_are_here),
+                       snippet = stringResource(R.string.current_location_marker))
             }
 
             // Loading Indicator
             if (!isMapLoaded) {
-                this@Column.AnimatedVisibility(
-                    visible = !isMapLoaded,
-                    modifier = Modifier.matchParentSize(),
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-                            .wrapContentSize(Alignment.Center),
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                this@Column.AnimatedVisibility(visible = !isMapLoaded,
+                                               modifier = Modifier.matchParentSize(),
+                                               enter = fadeIn(),
+                                               exit = fadeOut()) {
+                    CircularProgressIndicator(modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+                        .wrapContentSize(Alignment.Center), color = MaterialTheme.colorScheme.primary)
                 }
             }
         }

@@ -36,37 +36,28 @@ fun TypingIndicatorView() {
 
     // Animation for the first dot
     LaunchedEffect(Unit) {
-        dot1Offset.animateTo(
-            targetValue = 2f, animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = animationDuration, easing = LinearEasing
-                ), repeatMode = RepeatMode.Reverse
-            )
-        )
+        dot1Offset.animateTo(targetValue = 2f,
+                             animationSpec = infiniteRepeatable(animation = tween(durationMillis = animationDuration,
+                                                                                  easing = LinearEasing),
+                                                                repeatMode = RepeatMode.Reverse))
     }
 
     // Animation for the second dot with a delay
     LaunchedEffect(Unit) {
         delay(delayBetweenDots.toLong())
-        dot2Offset.animateTo(
-            targetValue = 2f, animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = animationDuration, easing = LinearEasing
-                ), repeatMode = RepeatMode.Reverse
-            )
-        )
+        dot2Offset.animateTo(targetValue = 2f,
+                             animationSpec = infiniteRepeatable(animation = tween(durationMillis = animationDuration,
+                                                                                  easing = LinearEasing),
+                                                                repeatMode = RepeatMode.Reverse))
     }
 
     // Animation for the third dot with a longer delay
     LaunchedEffect(Unit) {
         delay((2 * delayBetweenDots).toLong())
-        dot3Offset.animateTo(
-            targetValue = 2f, animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = animationDuration, easing = LinearEasing
-                ), repeatMode = RepeatMode.Reverse
-            )
-        )
+        dot3Offset.animateTo(targetValue = 2f,
+                             animationSpec = infiniteRepeatable(animation = tween(durationMillis = animationDuration,
+                                                                                  easing = LinearEasing),
+                                                                repeatMode = RepeatMode.Reverse))
     }
 
     // Row to display the animated dots

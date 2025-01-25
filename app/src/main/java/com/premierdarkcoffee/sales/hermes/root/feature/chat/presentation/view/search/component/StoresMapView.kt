@@ -44,28 +44,24 @@ import com.premierdarkcoffee.sales.hermes.root.util.function.getZoomLevel
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 
 @Composable
-fun StoresMapView(
-    user: User,
-    stores: List<Store>,
-    onNavigateToStoreMarkerClicked: (String) -> Unit
-) {
+fun StoresMapView(user: User, stores: List<Store>, onNavigateToStoreMarkerClicked: (String) -> Unit) {
     var isMapLoaded by remember { mutableStateOf(false) }
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(
-            LatLng(user.location.coordinates[1], user.location.coordinates[0]), 10f
-        )
+        position = CameraPosition.fromLatLngZoom(LatLng(user.location.coordinates[1], user.location.coordinates[0]), 10f)
     }
 
     val context = LocalContext.current
     val distance = SharedPreferencesHelper.getDistance(context)
 
     // Main Container
-    Column(
-        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(modifier = Modifier.fillMaxSize(),
+           verticalArrangement = Arrangement.Bottom,
+           horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier.fillMaxSize()) {
             // Google Map
-            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, onMapLoaded = { isMapLoaded = true }) {
+            GoogleMap(modifier = Modifier.fillMaxSize(),
+                      cameraPositionState = cameraPositionState,
+                      onMapLoaded = { isMapLoaded = true }) {
                 // User Location Marker
                 val userLocation = LatLng(user.location.coordinates[1], user.location.coordinates[0])
                 Marker(state = MarkerState(userLocation),
@@ -76,9 +72,7 @@ fun StoresMapView(
 
                 // Store Markers
                 stores.forEach { store ->
-                    val storeLocation = LatLng(
-                        store.address.location.coordinates[1], store.address.location.coordinates[0]
-                    )
+                    val storeLocation = LatLng(store.address.location.coordinates[1], store.address.location.coordinates[0])
                     Marker(state = MarkerState(storeLocation),
                            title = store.name,
                            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
@@ -91,15 +85,13 @@ fun StoresMapView(
 
             // Loading Indicator
             if (!isMapLoaded) {
-                this@Column.AnimatedVisibility(
-                    visible = !isMapLoaded, modifier = Modifier.matchParentSize(), enter = fadeIn(), exit = fadeOut()
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-                            .wrapContentSize(Alignment.Center),
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                this@Column.AnimatedVisibility(visible = !isMapLoaded,
+                                               modifier = Modifier.matchParentSize(),
+                                               enter = fadeIn(),
+                                               exit = fadeOut()) {
+                    CircularProgressIndicator(modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+                        .wrapContentSize(Alignment.Center), color = MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -107,10 +99,8 @@ fun StoresMapView(
 
     // Camera Animation
     LaunchedEffect(key1 = user.location, key2 = distance) {
-        cameraPositionState.animate(
-            CameraUpdateFactory.newLatLngZoom(
-                LatLng(user.location.coordinates[1], user.location.coordinates[0]), getZoomLevel(distance)
-            ), 1000
-        )
+        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(LatLng(user.location.coordinates[1],
+                                                                             user.location.coordinates[0]),
+                                                                      getZoomLevel(distance)), 1000)
     }
 }
