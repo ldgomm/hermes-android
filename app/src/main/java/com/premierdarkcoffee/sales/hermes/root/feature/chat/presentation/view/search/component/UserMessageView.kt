@@ -36,45 +36,33 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.co
  */
 @Composable
 fun UserMessageView(message: ChatMessage) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 4.dp)
-            .wrapContentWidth(Alignment.End),
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(end = 4.dp)
+        .wrapContentWidth(Alignment.End),
         horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.End,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-        ) {
+        verticalAlignment = Alignment.CenterVertically) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp),
+               horizontalAlignment = Alignment.End,
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .wrapContentHeight()) {
             // Message Text
-            Text(
-                text = message.firstMessage,
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(
-                        MaterialTheme.colorScheme.primary.copy(
-                            if (isSystemInDarkTheme()) 0.2f else 0.9f
-                        )
-                    )
-                    .padding(8.dp)
-                    .semantics { contentDescription = message.firstMessage },
-                textAlign = TextAlign.Center
-            )
+            Text(text = message.firstMessage,
+                 style = MaterialTheme.typography.bodyLarge,
+                 color = Color.White,
+                 modifier = Modifier
+                     .clip(RoundedCornerShape(12.dp))
+                     .background(MaterialTheme.colorScheme.primary.copy(if (isSystemInDarkTheme()) 0.2f else 0.9f))
+                     .padding(8.dp)
+                     .semantics { contentDescription = message.firstMessage },
+                 textAlign = TextAlign.Center)
 
             // Message Date
-            Text(
-                text = message.date.formatMessageDate(LocalContext.current),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.align(Alignment.End)
-            )
+            Text(text = message.date.formatMessageDate(LocalContext.current),
+                 style = MaterialTheme.typography.bodySmall,
+                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                 modifier = Modifier.align(Alignment.End))
         }
     }
 }

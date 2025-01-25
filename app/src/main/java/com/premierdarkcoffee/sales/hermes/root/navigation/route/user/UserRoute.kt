@@ -11,10 +11,7 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.us
 import com.premierdarkcoffee.sales.hermes.root.navigation.UserRoute
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 
-fun NavGraphBuilder.userRoute(
-    popBackStack: () -> Unit,
-    onEditUserButtonClicked: () -> Unit
-) {
+fun NavGraphBuilder.userRoute(popBackStack: () -> Unit, onEditUserButtonClicked: () -> Unit) {
 
     composable<UserRoute> {
         val context = LocalContext.current

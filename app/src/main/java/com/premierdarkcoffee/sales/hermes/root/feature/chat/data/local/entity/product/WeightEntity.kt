@@ -1,7 +1,6 @@
 package com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.product
 
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.product.Weight
-import androidx.room.Entity
 
 data class WeightEntity(val weight: Double, val unit: String) {
 

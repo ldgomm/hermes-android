@@ -1,7 +1,6 @@
 package com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.product
 
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.product.Warranty
-import androidx.room.Entity
 
 data class WarrantyEntity(val hasWarranty: Boolean, val details: List<String>, val months: Int) {
 

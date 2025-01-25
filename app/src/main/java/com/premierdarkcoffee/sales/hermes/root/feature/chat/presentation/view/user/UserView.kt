@@ -39,82 +39,59 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.us
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserView(
-    user: User,
-    popBackStack: () -> Unit,
-    onEditUserButtonClicked: () -> Unit
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = user.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.semantics { contentDescription = user.name }
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = popBackStack) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                },
-                actions = {
-                    Button(onClick = onEditUserButtonClicked) {
-                        Text(stringResource(R.string.edit))
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxWidth()
-        ) {
+fun UserView(user: User, popBackStack: () -> Unit, onEditUserButtonClicked: () -> Unit) {
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            Text(text = user.name,
+                 style = MaterialTheme.typography.titleLarge,
+                 modifier = Modifier.semantics { contentDescription = user.name })
+        }, navigationIcon = {
+            IconButton(onClick = popBackStack) {
+                Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
+                     contentDescription = stringResource(R.string.back))
+            }
+        }, actions = {
+            Button(onClick = onEditUserButtonClicked) {
+                Text(stringResource(R.string.edit))
+            }
+        })
+    }) { paddingValues ->
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp), modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxWidth()) {
 
             // Location Section
             val mapLocationDescription = stringResource(R.string.map_location_description)
             Section {
                 val location = LatLng(user.location.coordinates[1], user.location.coordinates[0])
-                UserMapView(
-                    location = location,
-                    modifier = Modifier
-                        .height(300.dp)
-                        .clip(RoundedCornerShape(11.dp))
-                        .padding(8.dp)
-                        .semantics {
-                            contentDescription = (mapLocationDescription)
-                        }
-                )
+                UserMapView(location = location,
+                            modifier = Modifier
+                                .height(300.dp)
+                                .clip(RoundedCornerShape(11.dp))
+                                .padding(8.dp)
+                                .semantics {
+                                    contentDescription = (mapLocationDescription)
+                                })
             }
 
             // Privacy Information
-            Text(
-                text = stringResource(id = R.string.privacy_statement),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
+            Text(text = stringResource(id = R.string.privacy_statement),
+                 style = MaterialTheme.typography.bodyMedium,
+                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                 textAlign = TextAlign.Center,
+                 modifier = Modifier.padding(16.dp))
         }
     }
 }
 
 @Composable
 fun Section(content: @Composable () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(16.dp)
-    ) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .padding(12.dp)
+        .clip(RoundedCornerShape(8.dp))
+        .background(MaterialTheme.colorScheme.surfaceVariant)
+        .padding(16.dp)) {
         content()
     }
 }
