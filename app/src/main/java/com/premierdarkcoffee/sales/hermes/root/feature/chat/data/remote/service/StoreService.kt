@@ -7,8 +7,6 @@ package com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.service
 //  Created by José Ruiz on 31/7/24.
 //
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.store.StoreDto
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.serviceable.StoreServiceable
 import io.ktor.client.HttpClient

@@ -39,10 +39,7 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.message.MessageType
 
 @Composable
-fun StoreMessageView(
-    message: Message,
-    markMessageAsReadLaunchedEffect: (MessageEntity) -> Unit
-) {
+fun StoreMessageView(message: Message, markMessageAsReadLaunchedEffect: (MessageEntity) -> Unit) {
     val context = LocalContext.current
 
     // Localized strings for message types
@@ -60,78 +57,62 @@ fun StoreMessageView(
 
     when (message.type) {
         MessageType.TEXT -> {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(start = 4.dp)
-                    .wrapContentWidth(Alignment.Start)
-                    .padding(vertical = 4.dp),
+            Row(modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(start = 4.dp)
+                .wrapContentWidth(Alignment.Start)
+                .padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
+                verticalAlignment = Alignment.CenterVertically) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp),
+                       horizontalAlignment = Alignment.Start,
+                       modifier = Modifier
+                           .fillMaxWidth()
+                           .wrapContentHeight()) {
                     // Message text with accessibility
-                    Text(
-                        text = message.text,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color.Gray.copy(alpha = 0.2f))
-                            .padding(8.dp)
-                            .semantics { contentDescription = "$textMessageLabel: ${message.text}" },
-                        textAlign = TextAlign.Start
-                    )
+                    Text(text = message.text,
+                         style = MaterialTheme.typography.bodyLarge,
+                         modifier = Modifier
+                             .clip(RoundedCornerShape(12.dp))
+                             .background(Color.Gray.copy(alpha = 0.2f))
+                             .padding(8.dp)
+                             .semantics { contentDescription = "$textMessageLabel: ${message.text}" },
+                         textAlign = TextAlign.Start)
 
                     // Message date with accessibility
-                    Text(
-                        text = message.date.formatMessageDate(context),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        modifier = Modifier.semantics {
-                            contentDescription = message.date.formatMessageDate(context)
-                        }
-                    )
+                    Text(text = message.date.formatMessageDate(context),
+                         style = MaterialTheme.typography.bodySmall,
+                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                         modifier = Modifier.semantics {
+                             contentDescription = message.date.formatMessageDate(context)
+                         })
                 }
                 Spacer(modifier = Modifier.width(60.dp))
             }
         }
 
         MessageType.IMAGE -> {
-            Text(
-                text = imageMessageLabel,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.semantics { contentDescription = imageMessageLabel }
-            )
+            Text(text = imageMessageLabel,
+                 style = MaterialTheme.typography.bodyLarge,
+                 modifier = Modifier.semantics { contentDescription = imageMessageLabel })
         }
 
         MessageType.VIDEO -> {
-            Text(
-                text = videoMessageLabel,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.semantics { contentDescription = videoMessageLabel }
-            )
+            Text(text = videoMessageLabel,
+                 style = MaterialTheme.typography.bodyLarge,
+                 modifier = Modifier.semantics { contentDescription = videoMessageLabel })
         }
 
         MessageType.AUDIO -> {
-            Text(
-                text = audioMessageLabel,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.semantics { contentDescription = audioMessageLabel }
-            )
+            Text(text = audioMessageLabel,
+                 style = MaterialTheme.typography.bodyLarge,
+                 modifier = Modifier.semantics { contentDescription = audioMessageLabel })
         }
 
         MessageType.FILE -> {
-            Text(
-                text = fileMessageLabel,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.semantics { contentDescription = fileMessageLabel }
-            )
+            Text(text = fileMessageLabel,
+                 style = MaterialTheme.typography.bodyLarge,
+                 modifier = Modifier.semantics { contentDescription = fileMessageLabel })
         }
     }
 }
