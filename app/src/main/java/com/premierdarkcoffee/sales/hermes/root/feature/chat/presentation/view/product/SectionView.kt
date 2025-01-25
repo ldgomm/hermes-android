@@ -22,34 +22,22 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SectionView(
-    title: String,
-    content: @Composable () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    ) {
+fun SectionView(title: String, content: @Composable () -> Unit) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 8.dp)) {
         // Title with adaptive text size and accessibility
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .semantics { contentDescription = title }
-        )
+        Text(text = title,
+             style = MaterialTheme.typography.labelLarge,
+             modifier = Modifier
+                 .padding(horizontal = 16.dp)
+                 .semantics { contentDescription = title })
         // Content box with background and rounded corners
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .background(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .padding(16.dp)
-        ) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), shape = RoundedCornerShape(10.dp))
+            .padding(16.dp)) {
             content()
         }
     }

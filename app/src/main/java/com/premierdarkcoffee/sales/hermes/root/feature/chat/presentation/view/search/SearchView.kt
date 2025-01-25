@@ -99,18 +99,16 @@ import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchView(
-    stores: Set<Store>,
-    user: User,
-    chatMessages: List<ChatMessage>,
-    isTyping: Boolean,
-    sendMessage: (String, GeoPoint, Int) -> Unit,
-    onProductCardClicked: (product: String) -> Unit,
-    onNavigateToStoreMarkerClicked: (String) -> Unit,
-    onDeleteChatMessagesIconButtonClicked: () -> Unit,
-    popBackStack: () -> Unit,
-    onEditUserButtonClicked: () -> Unit
-) {
+fun SearchView(stores: Set<Store>,
+               user: User,
+               chatMessages: List<ChatMessage>,
+               isTyping: Boolean,
+               sendMessage: (String, GeoPoint, Int) -> Unit,
+               onProductCardClicked: (product: String) -> Unit,
+               onNavigateToStoreMarkerClicked: (String) -> Unit,
+               onDeleteChatMessagesIconButtonClicked: () -> Unit,
+               popBackStack: () -> Unit,
+               onEditUserButtonClicked: () -> Unit) {
 
     var inputText by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -129,9 +127,10 @@ fun SearchView(
     var doNotShowAgainChecked by remember { mutableStateOf(false) }
     val doNotShowAgainDistanceAlert: Boolean = SharedPreferencesHelper.getDoNotShowAgainDistanceAlert(context)
 
-    val groupedMessages: List<Pair<Date, List<ChatMessage>>> = groupChatMessagesByDay(chatMessages).toSortedMap().map { (key, value) ->
-        key to value.sortedBy { it.date }
-    }
+    val groupedMessages: List<Pair<Date, List<ChatMessage>>> =
+        groupChatMessagesByDay(chatMessages).toSortedMap().map { (key, value) ->
+            key to value.sortedBy { it.date }
+        }
 
     LaunchedEffect(chatMessages.size, isTyping) {
         listState.animateScrollToItem(chatMessages.size)
@@ -139,17 +138,15 @@ fun SearchView(
 
     Scaffold(topBar = {
         TopAppBar(title = {
-            Text(
-                text = stringResource(
-                    id = if (isTyping) searching_within_distance else search_within_distance, distance
-                ), modifier = Modifier.clickable {
-                    if (doNotShowAgainDistanceAlert) {
-                        openBottomSheet = true
-                    } else {
-                        showDistanceAdviceDialog = true
-                    }
-                }, style = titleStyle
-            )
+            Text(text = stringResource(id = if (isTyping) searching_within_distance else search_within_distance, distance),
+                 modifier = Modifier.clickable {
+                     if (doNotShowAgainDistanceAlert) {
+                         openBottomSheet = true
+                     } else {
+                         showDistanceAdviceDialog = true
+                     }
+                 },
+                 style = titleStyle)
         }, navigationIcon = {
             IconButton(onClick = { popBackStack() }) {
                 Icon(imageVector = ImageVector.vectorResource(id = arrow_back), contentDescription = null)
@@ -188,21 +185,19 @@ fun SearchView(
                 })
             }) {
 
-            LazyColumn(
-                state = listState, modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(4.dp), verticalArrangement = Arrangement.Bottom
-            ) {
+            LazyColumn(state = listState,
+                       modifier = Modifier
+                           .weight(1f)
+                           .fillMaxWidth()
+                           .padding(4.dp),
+                       verticalArrangement = Arrangement.Bottom) {
                 // Empty state with search phrases
                 item {
                     if (chatMessages.isEmpty()) {
                         SearchPhrasesList { searchPhrase ->
-                            val geoPoint = GeoPoint(
-                                type = "Point", coordinates = listOf(
-                                    SharedPreferencesHelper.getLongitude(context), SharedPreferencesHelper.getLatitude(context)
-                                )
-                            )
+                            val geoPoint = GeoPoint(type = "Point",
+                                                    coordinates = listOf(SharedPreferencesHelper.getLongitude(context),
+                                                                         SharedPreferencesHelper.getLatitude(context)))
                             sendMessage(searchPhrase.text, geoPoint, distance)
                         }
                     }
@@ -215,20 +210,16 @@ fun SearchView(
                 groupedMessages.forEach { (day, messages) ->
                     // Day header
                     item {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = day.time.formatDayDate(context),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier
-                                    .padding(4.dp)
-                                    .clip(RoundedCornerShape(4.dp))
-                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
-                                    .padding(horizontal = 12.dp),
-                                textAlign = TextAlign.Center
-                            )
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            Text(text = day.time.formatDayDate(context),
+                                 style = MaterialTheme.typography.bodySmall,
+                                 color = MaterialTheme.colorScheme.onSurface,
+                                 modifier = Modifier
+                                     .padding(4.dp)
+                                     .clip(RoundedCornerShape(4.dp))
+                                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
+                                     .padding(horizontal = 12.dp),
+                                 textAlign = TextAlign.Center)
                         }
                     }
 
@@ -244,63 +235,53 @@ fun SearchView(
                             when {
                                 productsAvailable && optionalProductsAvailable && secondMessageAvailable -> {
                                     // Case 1: Both products and optionalProducts are available
-                                    ServerMessageView(
-                                        stores = stores,
-                                        user = user,
-                                        message = message.secondMessage!!,
-                                        products = message.optionalProducts!!,
-                                        date = message.date,
-                                        onProductCardClicked = onProductCardClicked,
-                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                    )
-                                    ServerMessageView(
-                                        stores = stores,
-                                        user = user,
-                                        message = message.firstMessage,
-                                        products = message.products!!,
-                                        date = message.date,
-                                        onProductCardClicked = onProductCardClicked,
-                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                    )
+                                    ServerMessageView(stores = stores,
+                                                      user = user,
+                                                      message = message.secondMessage!!,
+                                                      products = message.optionalProducts!!,
+                                                      date = message.date,
+                                                      onProductCardClicked = onProductCardClicked,
+                                                      onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked)
+                                    ServerMessageView(stores = stores,
+                                                      user = user,
+                                                      message = message.firstMessage,
+                                                      products = message.products!!,
+                                                      date = message.date,
+                                                      onProductCardClicked = onProductCardClicked,
+                                                      onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked)
                                 }
 
                                 productsAvailable -> {
                                     // Case 2: Only products are available
-                                    ServerMessageView(
-                                        stores = stores,
-                                        user = user,
-                                        message = message.firstMessage,
-                                        products = message.products!!,
-                                        date = message.date,
-                                        onProductCardClicked = onProductCardClicked,
-                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                    )
+                                    ServerMessageView(stores = stores,
+                                                      user = user,
+                                                      message = message.firstMessage,
+                                                      products = message.products!!,
+                                                      date = message.date,
+                                                      onProductCardClicked = onProductCardClicked,
+                                                      onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked)
                                 }
 
                                 optionalProductsAvailable && secondMessageAvailable -> {
                                     // Case 3: Only optionalProducts are available
-                                    ServerMessageView(
-                                        stores = stores,
-                                        user = user,
-                                        message = message.secondMessage!!,
-                                        products = message.optionalProducts!!,
-                                        date = message.date,
-                                        onProductCardClicked = onProductCardClicked,
-                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                    )
+                                    ServerMessageView(stores = stores,
+                                                      user = user,
+                                                      message = message.secondMessage!!,
+                                                      products = message.optionalProducts!!,
+                                                      date = message.date,
+                                                      onProductCardClicked = onProductCardClicked,
+                                                      onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked)
                                 }
 
                                 else -> {
                                     // Case 4: Neither products nor optionalProducts are available
-                                    ServerMessageView(
-                                        stores = stores,
-                                        user = user,
-                                        message = message.firstMessage,
-                                        products = emptyList(),
-                                        date = message.date,
-                                        onProductCardClicked = onProductCardClicked,
-                                        onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked
-                                    )
+                                    ServerMessageView(stores = stores,
+                                                      user = user,
+                                                      message = message.firstMessage,
+                                                      products = emptyList(),
+                                                      date = message.date,
+                                                      onProductCardClicked = onProductCardClicked,
+                                                      onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked)
                                 }
                             }
                         }
@@ -314,54 +295,43 @@ fun SearchView(
             }
 
 
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
+            Row(modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                OutlinedTextField(
-                    value = inputText,
-                    onValueChange = { inputText = it },
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(Color.Transparent, shape = RoundedCornerShape(8.dp))
-                        .padding(8.dp)
-                        .onFocusChanged { isFocused = it.isFocused },
-                    placeholder = {
-                        Text(
-                            text = if (isTyping) stringResource(id = waiting_for_response) else stringResource(id = ask_anything), color = Color.Gray
-                        )
-                    },
-                    singleLine = false,
-                    maxLines = 5,
-                    shape = RoundedCornerShape(8.dp)
-                )
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                OutlinedTextField(value = inputText,
+                                  onValueChange = { inputText = it },
+                                  modifier = Modifier
+                                      .weight(1f)
+                                      .background(Color.Transparent, shape = RoundedCornerShape(8.dp))
+                                      .padding(8.dp)
+                                      .onFocusChanged { isFocused = it.isFocused },
+                                  placeholder = {
+                                      Text(text = if (isTyping) stringResource(id = waiting_for_response) else stringResource(id = ask_anything),
+                                           color = Color.Gray)
+                                  },
+                                  singleLine = false,
+                                  maxLines = 5,
+                                  shape = RoundedCornerShape(8.dp))
                 Spacer(modifier = Modifier.width(4.dp))
 
-                AnimatedVisibility(
-                    visible = inputText.isNotEmpty(),
-                    enter = expandIn(expandFrom = Alignment.Center) + fadeIn(),
-                    exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut()
-                ) {
+                AnimatedVisibility(visible = inputText.isNotEmpty(),
+                                   enter = expandIn(expandFrom = Alignment.Center) + fadeIn(),
+                                   exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut()) {
                     IconButton(onClick = {
-                        val geoPoint = GeoPoint(
-                            type = "Point", coordinates = listOf(
-                                SharedPreferencesHelper.getLongitude(context), SharedPreferencesHelper.getLatitude(context)
-                            )
-                        )
+                        val geoPoint = GeoPoint(type = "Point",
+                                                coordinates = listOf(SharedPreferencesHelper.getLongitude(context),
+                                                                     SharedPreferencesHelper.getLatitude(context)))
                         sendMessage(inputText, geoPoint, distance)
                         inputText = ""
                         isFocused = false
                         focusManager.clearFocus()
                     }, modifier = Modifier.size(48.dp)) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Sharp.Send,
-                            contentDescription = stringResource(id = send_button),
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        Icon(imageVector = Icons.AutoMirrored.Sharp.Send,
+                             contentDescription = stringResource(id = send_button),
+                             tint = MaterialTheme.colorScheme.primary,
+                             modifier = Modifier.size(24.dp))
                     }
                 }
             }
@@ -378,21 +348,17 @@ fun SearchView(
                  modifier = Modifier.semantics { contentDescription = distanceAdviceTitle })
         }, text = {
             Column {
-                Text(
-                    text = stringResource(id = R.string.distance_advice_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                Text(text = stringResource(id = R.string.distance_advice_description),
+                     style = MaterialTheme.typography.bodyMedium,
+                     modifier = Modifier.padding(bottom = 8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = doNotShowAgainChecked, onCheckedChange = { checked ->
                         doNotShowAgainChecked = checked
                         SharedPreferencesHelper.setDoNotShowAgainDistanceAlert(context, checked)
                     }, modifier = Modifier.semantics { contentDescription = doNotShowAgain })
-                    Text(
-                        text = stringResource(id = R.string.do_not_show_again),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
+                    Text(text = stringResource(id = R.string.do_not_show_again),
+                         style = MaterialTheme.typography.bodySmall,
+                         modifier = Modifier.padding(start = 8.dp))
                 }
             }
         }, confirmButton = {
@@ -400,15 +366,11 @@ fun SearchView(
                 showDistanceAdviceDialog = false
                 openBottomSheet = true
             }) {
-                Text(
-                    text = stringResource(id = R.string.understood), style = MaterialTheme.typography.bodyMedium
-                )
+                Text(text = stringResource(id = R.string.understood), style = MaterialTheme.typography.bodyMedium)
             }
         }, dismissButton = {
             Button(onClick = { showDistanceAdviceDialog = false }) {
-                Text(
-                    text = stringResource(id = R.string.cancel), style = MaterialTheme.typography.bodyMedium
-                )
+                Text(text = stringResource(id = R.string.cancel), style = MaterialTheme.typography.bodyMedium)
             }
         })
     }
@@ -416,68 +378,49 @@ fun SearchView(
 
     if (openBottomSheet) {
         ModalBottomSheet(onDismissRequest = { openBottomSheet = false }, sheetState = bottomSheetState) {
-            SearchDistanceMapView(
-                userLocation = user.location, distance = distance, onDistanceChange = {
-                    distance = it
-                    SharedPreferencesHelper.setDistance(context, distance)
-                }, onEditUserButtonClicked
-            )
+            SearchDistanceMapView(userLocation = user.location, distance = distance, onDistanceChange = {
+                distance = it
+                SharedPreferencesHelper.setDistance(context, distance)
+            }, onEditUserButtonClicked)
         }
     }
 }
 
-data class SearchPhrase(
-    val id: UUID = UUID.randomUUID(),
-    val icon: ImageVector,
-    val text: String
-)
+data class SearchPhrase(val id: UUID = UUID.randomUUID(), val icon: ImageVector, val text: String)
 
 @Composable
 fun SearchPhrasesList(onPhraseClick: (SearchPhrase) -> Unit) {
-    val searchPhrases = listOf(
-        SearchPhrase(icon = ImageVector.vectorResource(map), text = "I need a new MacBook Pro"),
-        SearchPhrase(icon = ImageVector.vectorResource(map), text = "What are the latest iPads?"),
-        SearchPhrase(icon = ImageVector.vectorResource(map), text = "Show me the best deals on iPhones"),
-        SearchPhrase(icon = ImageVector.vectorResource(map), text = "Do you have Samsung 4K TVs?")
-    ).shuffled(Random(System.currentTimeMillis()))
+    val searchPhrases = listOf(SearchPhrase(icon = ImageVector.vectorResource(map), text = "I need a new MacBook Pro"),
+                               SearchPhrase(icon = ImageVector.vectorResource(map), text = "What are the latest iPads?"),
+                               SearchPhrase(icon = ImageVector.vectorResource(map), text = "Show me the best deals on iPhones"),
+                               SearchPhrase(icon = ImageVector.vectorResource(map),
+                                            text = "Do you have Samsung 4K TVs?")).shuffled(Random(System.currentTimeMillis()))
 
     if (searchPhrases.isNotEmpty()) {
-        Row(
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Row(modifier = Modifier
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             searchPhrases.forEach { phrase ->
-                Column(
-                    modifier = Modifier
-                        .width(180.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        .border(
-                            width = 1.dp,
-                            color = Color.Gray.copy(alpha = 0.5f),
-                            shape = RoundedCornerShape(15.dp)
-                        )
-                        .clickable { onPhraseClick(phrase) }
-                        .padding(16.dp)
-                        .semantics { contentDescription = phrase.text },
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Image(
-                        imageVector = phrase.icon,
-                        contentDescription = phrase.text,
-                        modifier = Modifier.size(32.dp),
-                        contentScale = ContentScale.Fit
-                    )
+                Column(modifier = Modifier
+                    .width(180.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .border(width = 1.dp, color = Color.Gray.copy(alpha = 0.5f), shape = RoundedCornerShape(15.dp))
+                    .clickable { onPhraseClick(phrase) }
+                    .padding(16.dp)
+                    .semantics { contentDescription = phrase.text },
+                       horizontalAlignment = Alignment.Start,
+                       verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Image(imageVector = phrase.icon,
+                          contentDescription = phrase.text,
+                          modifier = Modifier.size(32.dp),
+                          contentScale = ContentScale.Fit)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = phrase.text,
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Start
-                    )
+                    Text(text = phrase.text,
+                         style = MaterialTheme.typography.bodySmall,
+                         maxLines = 3,
+                         overflow = TextOverflow.Ellipsis,
+                         textAlign = TextAlign.Start)
                 }
             }
         }

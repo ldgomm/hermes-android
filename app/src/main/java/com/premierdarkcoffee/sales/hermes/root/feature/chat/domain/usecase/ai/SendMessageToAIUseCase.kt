@@ -8,10 +8,7 @@ import javax.inject.Inject
 
 class SendMessageToAIUseCase @Inject constructor(private val productServiceable: ProductServiceable) {
 
-    operator fun invoke(
-        url: String,
-        request: ClientProductRequest
-    ): Flow<Result<ClientProductResponse>> {
+    operator fun invoke(url: String, request: ClientProductRequest): Flow<Result<ClientProductResponse>> {
         return productServiceable.searchProducts(url = url, request = request)
     }
 }

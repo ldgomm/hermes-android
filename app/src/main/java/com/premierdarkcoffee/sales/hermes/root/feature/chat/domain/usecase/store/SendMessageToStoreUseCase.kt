@@ -15,9 +15,9 @@ import javax.inject.Inject
 
 class SendMessageToStoreUseCase @Inject constructor(private val repositoriable: MessageRepositoriable) {
 
-   suspend operator fun invoke(message: MessageDto) {
-       withContext(Dispatchers.IO) {
-           repositoriable.addMessage(message)
-       }
-   }
+    suspend operator fun invoke(message: MessageDto) {
+        withContext(Dispatchers.IO) {
+            repositoriable.addMessage(message)
+        }
+    }
 }

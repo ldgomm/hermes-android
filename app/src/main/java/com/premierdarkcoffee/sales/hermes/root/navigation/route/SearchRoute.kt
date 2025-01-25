@@ -18,13 +18,11 @@ import com.premierdarkcoffee.sales.hermes.root.navigation.SearchRoute
 import com.premierdarkcoffee.sales.hermes.root.util.function.sharedViewModel
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 
-fun NavGraphBuilder.searchRoute(
-    navController: NavHostController,
-    onProductCardClicked: (product: String) -> Unit,
-    onNavigateToStoreMarkerClicked: (String) -> Unit,
-    popBackStack: () -> Unit,
-    onEditUserButtonClicked: () -> Unit
-) {
+fun NavGraphBuilder.searchRoute(navController: NavHostController,
+                                onProductCardClicked: (product: String) -> Unit,
+                                onNavigateToStoreMarkerClicked: (String) -> Unit,
+                                popBackStack: () -> Unit,
+                                onEditUserButtonClicked: () -> Unit) {
 
     composable<SearchRoute> { backStackEntry ->
         val viewModel = backStackEntry.sharedViewModel<ChatViewModel>(navController = navController)

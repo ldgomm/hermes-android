@@ -49,15 +49,13 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.pr
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ServerMessageView(
-    stores: Set<Store>,
-    user: User,
-    message: String,
-    products: List<Product>?,
-    date: Long,
-    onProductCardClicked: (product: String) -> Unit,
-    onNavigateToStoreMarkerClicked: (String) -> Unit
-) {
+fun ServerMessageView(stores: Set<Store>,
+                      user: User,
+                      message: String,
+                      products: List<Product>?,
+                      date: Long,
+                      onProductCardClicked: (product: String) -> Unit,
+                      onNavigateToStoreMarkerClicked: (String) -> Unit) {
     val storeIds = products?.map { it.storeId } ?: emptyList()
     val matchedStores = stores.filter { it.id in storeIds }
 
@@ -67,61 +65,47 @@ fun ServerMessageView(
 
     val expanded by remember { mutableStateOf(true) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 4.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.Start
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(0.8f),
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(start = 4.dp),
+           verticalArrangement = Arrangement.Center,
+           horizontalAlignment = Alignment.Start) {
+        Row(modifier = Modifier.fillMaxWidth(0.8f),
             horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
+            verticalAlignment = Alignment.CenterVertically) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp),
+                   horizontalAlignment = Alignment.Start,
+                   modifier = Modifier
+                       .fillMaxWidth()
+                       .wrapContentHeight()) {
                 // Message Text
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(11.dp))
-                        .background(Color.Gray.copy(alpha = 0.2f))
-                        .padding(8.dp)
-                        .semantics { contentDescription = message },
-                    textAlign = TextAlign.Start
-                )
+                Text(text = message,
+                     style = MaterialTheme.typography.bodyLarge,
+                     modifier = Modifier
+                         .clip(RoundedCornerShape(11.dp))
+                         .background(Color.Gray.copy(alpha = 0.2f))
+                         .padding(8.dp)
+                         .semantics { contentDescription = message },
+                     textAlign = TextAlign.Start)
 
                 // Date
-                Text(
-                    text = date.formatMessageDate(LocalContext.current),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
+                Text(text = date.formatMessageDate(LocalContext.current),
+                     style = MaterialTheme.typography.bodySmall,
+                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
             }
             Spacer(modifier = Modifier.width(60.dp))
         }
 
         // Animated visibility for the product details
-        AnimatedVisibility(
-            visible = expanded,
-            enter = expandIn(expandFrom = Alignment.Center) + fadeIn(),
-            exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut()
-        ) {
+        AnimatedVisibility(visible = expanded,
+                           enter = expandIn(expandFrom = Alignment.Center) + fadeIn(),
+                           exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut()) {
             Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                    verticalAlignment = Alignment.CenterVertically) {
                     products?.forEach { product ->
                         Box(modifier = Modifier.padding(end = 4.dp)) {
                             val store: Store? = stores.firstOrNull { it.id == product.storeId }
@@ -132,22 +116,18 @@ fun ServerMessageView(
 
                 // View Stores Button
                 if (!products.isNullOrEmpty()) {
-                    Text(
-                        text = LocalContext.current.resources.getQuantityString(
-                            if (products.count() == 1) R.string.view_store_on_map else R.plurals.view_stores_on_map,
-                            products.size,
-                            products.size
-                        ),
-                        modifier = Modifier
-                            .clickable { openBottomSheet = true }
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                            .padding(vertical = 4.dp)
-                            .background(Color.Gray.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
-                            .padding(4.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                    Text(text = LocalContext.current.resources.getQuantityString(if (products.count() == 1) R.string.view_store_on_map else R.plurals.view_stores_on_map,
+                                                                                 products.size,
+                                                                                 products.size),
+                         modifier = Modifier
+                             .clickable { openBottomSheet = true }
+                             .fillMaxWidth()
+                             .wrapContentWidth(Alignment.CenterHorizontally)
+                             .padding(vertical = 4.dp)
+                             .background(Color.Gray.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
+                             .padding(4.dp),
+                         color = MaterialTheme.colorScheme.primary,
+                         style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
@@ -155,10 +135,7 @@ fun ServerMessageView(
 
     // Modal Bottom Sheet for Store Map View
     if (openBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { openBottomSheet = false },
-            sheetState = bottomSheetState
-        ) {
+        ModalBottomSheet(onDismissRequest = { openBottomSheet = false }, sheetState = bottomSheetState) {
             StoresMapView(user = user, stores = matchedStores, onNavigateToStoreMarkerClicked)
         }
     }
