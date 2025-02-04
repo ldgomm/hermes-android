@@ -99,7 +99,14 @@ fun ChatsView(
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
-                actions = {
+                navigationIcon = {
+                    IconButton(onClick = navigateToUserView) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.person_outline),
+                            contentDescription = stringResource(id = R.string.user_profile_icon_description)
+                        )
+                    }
+                }, actions = {
                     IconButton(onClick = navigateToUserView) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.person_outline),

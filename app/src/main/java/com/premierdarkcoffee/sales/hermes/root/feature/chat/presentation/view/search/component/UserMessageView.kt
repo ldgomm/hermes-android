@@ -22,7 +22,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.chat.ChatMessage
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.conversation.component.formatMessageDate
 

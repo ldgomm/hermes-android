@@ -61,52 +61,38 @@ fun StoresMapView(
 
     // Main Container
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom, horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             // Google Map
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState,
-                onMapLoaded = { isMapLoaded = true }
-            ) {
+            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, onMapLoaded = { isMapLoaded = true }) {
                 // User Location Marker
                 val userLocation = LatLng(user.location.coordinates[1], user.location.coordinates[0])
-                Marker(
-                    state = MarkerState(userLocation),
-                    title = stringResource(id = R.string.you_are_here),
-                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE),
-                    snippet = stringResource(id = R.string.your_current_location),
-                    onInfoWindowClick = {}
-                )
+                Marker(state = MarkerState(userLocation),
+                       title = stringResource(id = R.string.you_are_here),
+                       icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE),
+                       snippet = stringResource(id = R.string.your_current_location),
+                       onInfoWindowClick = {})
 
                 // Store Markers
                 stores.forEach { store ->
                     val storeLocation = LatLng(
-                        store.address.location.coordinates[1],
-                        store.address.location.coordinates[0]
+                        store.address.location.coordinates[1], store.address.location.coordinates[0]
                     )
-                    Marker(
-                        state = MarkerState(storeLocation),
-                        title = store.name,
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
-                        snippet = stringResource(id = R.string.store_location),
-                        onInfoWindowClick = {
-                            onNavigateToStoreMarkerClicked(Gson().toJson(store))
-                        }
-                    )
+                    Marker(state = MarkerState(storeLocation),
+                           title = store.name,
+                           icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
+                           snippet = stringResource(id = R.string.store_location),
+                           onInfoWindowClick = {
+                               onNavigateToStoreMarkerClicked(Gson().toJson(store))
+                           })
                 }
             }
 
             // Loading Indicator
             if (!isMapLoaded) {
                 this@Column.AnimatedVisibility(
-                    visible = !isMapLoaded,
-                    modifier = Modifier.matchParentSize(),
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    visible = !isMapLoaded, modifier = Modifier.matchParentSize(), enter = fadeIn(), exit = fadeOut()
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier
@@ -123,8 +109,7 @@ fun StoresMapView(
     LaunchedEffect(key1 = user.location, key2 = distance) {
         cameraPositionState.animate(
             CameraUpdateFactory.newLatLngZoom(
-                LatLng(user.location.coordinates[1], user.location.coordinates[0]),
-                getZoomLevel(distance)
+                LatLng(user.location.coordinates[1], user.location.coordinates[0]), getZoomLevel(distance)
             ), 1000
         )
     }
