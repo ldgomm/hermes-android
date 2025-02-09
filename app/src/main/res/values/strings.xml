@@ -127,7 +127,7 @@
     <string name="send_button_description">Send message</string>
 
     <string name="offer_label">Offer</string>
-    <string name="distance_label">Distance</string>
+    <string name="distance_label">distance</string>
     <string name="discount_label">Discount</string>
     <string name="current_price_label">Current Price</string>
     <string name="original_price_label">Original Price</string>
