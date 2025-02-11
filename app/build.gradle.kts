@@ -154,11 +154,4 @@ dependencies {
     implementation(libs.androidx.datastore)
 
     implementation(libs.play.services.base)
-
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
-    testImplementation("org.mockito:mockito-core:4.11.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-    androidTestImplementation("androidx.arch.core:core-testing:2.1.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:2.0.0")
-
 }
