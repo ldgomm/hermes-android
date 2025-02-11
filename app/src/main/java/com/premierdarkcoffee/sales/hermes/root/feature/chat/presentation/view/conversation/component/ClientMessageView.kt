@@ -92,19 +92,16 @@ fun ClientMessageView(user: User,
                     verticalAlignment = Alignment.CenterVertically) {
                     Column(modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .wrapContentWidth(Alignment.End),
-                           verticalArrangement = Arrangement.Center,
-                           horizontalAlignment = Alignment.End) {
-                        // Message Bubble with Accessibility
+                        .wrapContentWidth(Alignment.End)
+                        .clickable {
+                            if (product != null) {
+                                expanded = !expanded
+                            }
+                        }, verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.End) {
                         Text(text = message.text,
                              style = MaterialTheme.typography.bodyLarge,
                              modifier = Modifier
                                  .clip(RoundedCornerShape(12.dp))
-                                 .clickable {
-                                     if (product != null) {
-                                         expanded = !expanded
-                                     }
-                                 }
                                  .background(MaterialTheme.colorScheme.primary.copy(if (isSystemInDarkTheme()) 0.2f else 0.9f))
                                  .padding(8.dp)
                                  .semantics { contentDescription = "$textMessageLabel: ${message.text}" },
