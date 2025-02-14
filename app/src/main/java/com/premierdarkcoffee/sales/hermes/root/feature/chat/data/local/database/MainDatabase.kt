@@ -23,7 +23,6 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.co
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.converter.StoreInformationConverter
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.converter.StoreStatusConverter
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.converter.StringConverter
-import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.converter.WarrantyConverter
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.message.MessageEntity
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.store.StoreEntity
 
@@ -39,7 +38,6 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.st
         PriceConverter::class,
         SpecificationsConverter::class,
         StringConverter::class,
-        WarrantyConverter::class,
         StoreInformationConverter::class,
         AddressConverter::class,
         GeoPointConverter::class,
