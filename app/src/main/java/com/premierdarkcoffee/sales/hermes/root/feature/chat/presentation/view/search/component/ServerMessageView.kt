@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,6 +55,7 @@ fun ServerMessageView(stores: Set<Store>,
                       date: Long,
                       onProductCardClicked: (product: String) -> Unit,
                       onNavigateToStoreMarkerClicked: (String) -> Unit) {
+
     val storeIds = products?.map { it.storeId } ?: emptyList()
     val matchedStores = stores.filter { it.id in storeIds }
 
@@ -63,26 +63,27 @@ fun ServerMessageView(stores: Set<Store>,
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
 
-    val expanded by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(true) }
 
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(start = 4.dp),
            verticalArrangement = Arrangement.Center,
            horizontalAlignment = Alignment.Start) {
-        Row(modifier = Modifier.fillMaxWidth(0.8f),
+        Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically) {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp),
+            Column(verticalArrangement = Arrangement.Center,
                    horizontalAlignment = Alignment.Start,
                    modifier = Modifier
-                       .fillMaxWidth()
-                       .wrapContentHeight()) {
+                       .fillMaxWidth(0.8f)
+                       .wrapContentWidth(Alignment.Start)) {
                 // Message Text
                 Text(text = message,
                      style = MaterialTheme.typography.bodyLarge,
                      modifier = Modifier
                          .clip(RoundedCornerShape(11.dp))
+                         .clickable { expanded = !expanded }
                          .background(Color.Gray.copy(alpha = 0.2f))
                          .padding(8.dp)
                          .semantics { contentDescription = message },
@@ -93,7 +94,7 @@ fun ServerMessageView(stores: Set<Store>,
                      style = MaterialTheme.typography.bodySmall,
                      color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
             }
-            Spacer(modifier = Modifier.width(60.dp))
+            Spacer(Modifier.padding(horizontal = 60.dp))
         }
 
         // Animated visibility for the product details
@@ -107,7 +108,7 @@ fun ServerMessageView(stores: Set<Store>,
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically) {
                     products?.forEach { product ->
-                        Box(modifier = Modifier.padding(end = 4.dp)) {
+                        Box(modifier = Modifier.width(300.dp)) {
                             val store: Store? = stores.firstOrNull { it.id == product.storeId }
                             ProductItemView(user = user, store = store, product = product, onProductCardClicked)
                         }
@@ -115,20 +116,23 @@ fun ServerMessageView(stores: Set<Store>,
                 }
 
                 // View Stores Button
-                if (!products.isNullOrEmpty()) {
-                    Text(text = LocalContext.current.resources.getQuantityString(if (products.count() == 1) R.string.view_store_on_map else R.plurals.view_stores_on_map,
-                                                                                 products.size,
-                                                                                 products.size),
-                         modifier = Modifier
-                             .clickable { openBottomSheet = true }
-                             .fillMaxWidth()
-                             .wrapContentWidth(Alignment.CenterHorizontally)
-                             .padding(vertical = 4.dp)
-                             .background(Color.Gray.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
-                             .padding(4.dp),
-                         color = MaterialTheme.colorScheme.primary,
-                         style = MaterialTheme.typography.bodySmall)
+                val storeText = if (products?.count() == 1) {
+                    LocalContext.current.getString(R.string.view_store_on_map)
+                } else {
+                    LocalContext.current.getString(R.string.view_stores_on_map)
                 }
+
+                Text(text = storeText,
+                     modifier = Modifier
+                         .clickable { openBottomSheet = true }
+                         .fillMaxWidth()
+                         .wrapContentWidth(Alignment.CenterHorizontally)
+                         .padding(vertical = 4.dp)
+                         .background(Color.Gray.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
+                         .padding(4.dp),
+                     color = MaterialTheme.colorScheme.primary,
+                     style = MaterialTheme.typography.bodySmall)
+
             }
         }
     }
