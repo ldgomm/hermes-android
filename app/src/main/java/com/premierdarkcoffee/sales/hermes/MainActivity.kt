@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.viewmodel.storeApiKey
 import com.premierdarkcoffee.sales.hermes.root.navigation.AuthenticationRoute
 import com.premierdarkcoffee.sales.hermes.root.navigation.ChatsRoute
-import com.premierdarkcoffee.sales.hermes.root.navigation.MainView
+import com.premierdarkcoffee.sales.hermes.root.navigation.NavigationGraph
 import com.premierdarkcoffee.sales.hermes.root.util.theme.HermesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
             val startDestination = if (user != null) ChatsRoute else AuthenticationRoute
 
             HermesTheme {
-                MainView(navController = navController, startDestination = startDestination)
+                NavigationGraph(navController, startDestination)
             }
         }
     }
