@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private lateinit var networkMonitor: NetworkMonitor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,14 +27,22 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
+        networkMonitor = NetworkMonitor(this)
 
         setContent {
             val navController = rememberNavController()
             val user = FirebaseAuth.getInstance().currentUser
             val startDestination = if (user != null) ChatsRoute else AuthenticationRoute
+            val isConnected by networkMonitor.observeAsState(true)
 
             HermesTheme {
-                NavigationGraph(navController, startDestination)
+                when {
+                    !isConnected -> NoInternetView()
+                    user != null -> NavigationGraph(navController, startDestination)
+                    else -> {
+                        UnstableConnectionView()
+                    }
+                }
             }
         }
     }
