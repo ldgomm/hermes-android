@@ -3,10 +3,8 @@ package com.premierdarkcoffee.sales.hermes.root.navigation
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Menu
-import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.premierdarkcoffee.sales.hermes.R.string.chats
-import com.premierdarkcoffee.sales.hermes.R.string.settings
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -29,7 +27,7 @@ data class ConversationRoute(val storeId: String? = null)
 data class ProductRoute(val productJson: String? = null)
 
 @Serializable
-data object SettingsRoute : Route(resourceId = settings, icon = Icons.Sharp.Settings)
+object SettingsRoute
 
 @Serializable
 object UserRoute
