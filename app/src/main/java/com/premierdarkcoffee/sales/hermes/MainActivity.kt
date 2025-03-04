@@ -36,13 +36,14 @@ class MainActivity : ComponentActivity() {
             val isConnected by networkMonitor.observeAsState(true)
 
             HermesTheme {
-                when {
-                    !isConnected -> NoInternetView()
-                    user != null -> NavigationGraph(navController, startDestination)
-                    else -> {
-                        UnstableConnectionView()
-                    }
-                }
+                NavigationGraph(navController, startDestination)
+//                when {
+//                    !isConnected -> NoInternetView()
+//                    user != null -> NavigationGraph(navController, startDestination)
+//                    else -> {
+//                        UnstableConnectionView()
+//                    }
+//                }
             }
         }
     }
