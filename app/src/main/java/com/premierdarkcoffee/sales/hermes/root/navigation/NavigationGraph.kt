@@ -53,11 +53,17 @@ fun NavigationGraph(navController: NavHostController, startDestination: Any, mod
         }, popBackStack = { navController.popBackStack() })
 
         userRoute(popBackStack = { navController.popBackStack() },
-                  onEditUserButtonClicked = { navController.navigate(EditUserRoute) })
+                  onEditUserButtonClicked = { navController.navigate(EditUserRoute) },
+                  onSettingsButtonClicked = { navController.navigate(SettingsRoute) })
         editUserRoute(popBackStack = { navController.popBackStack() })
 
         storeRoute(navController = navController)
 
-        settingsRoute()
+        settingsRoute(onUserSignedOutActionTriggered = {
+            navController.navigate(AuthenticationRoute) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
+        })
     }
 }
