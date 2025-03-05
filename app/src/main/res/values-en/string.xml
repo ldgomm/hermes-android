@@ -10,7 +10,7 @@
 
     <string name="no_store_name">No name</string>
     <string name="pinned_chat">Pinned chat</string>
-    <string name="chat_with_chatgpt">Chat with ChatGPT</string>
+    <string name="chat_with_chatgpt">Intelligent assistant</string>
     <string name="tech_inquiries_and_stock_availability">I will respond to technology product inquiries and check stock availability</string>
     <string name="stores_label">Stores</string>
     <string name="cart_is_empty">The cart is empty</string>
