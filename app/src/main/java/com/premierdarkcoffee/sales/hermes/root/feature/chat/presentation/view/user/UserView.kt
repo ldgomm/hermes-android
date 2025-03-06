@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,7 +41,7 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.entity.us
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserView(user: User, popBackStack: () -> Unit, onEditUserButtonClicked: () -> Unit) {
+fun UserView(user: User, popBackStack: () -> Unit, onEditUserButtonClicked: () -> Unit, onSettingsButtonClicked: () -> Unit) {
     Scaffold(topBar = {
         TopAppBar(title = {
             Text(text = user.name,
@@ -51,8 +53,11 @@ fun UserView(user: User, popBackStack: () -> Unit, onEditUserButtonClicked: () -
                      contentDescription = stringResource(R.string.back))
             }
         }, actions = {
-            Button(onClick = onEditUserButtonClicked) {
-                Text(stringResource(R.string.edit))
+            IconButton(onEditUserButtonClicked) {
+                Icon(imageVector = Icons.Default.Edit, null)
+            }
+            IconButton(onSettingsButtonClicked) {
+                Icon(imageVector = Icons.Default.Settings, null)
             }
         })
     }) { paddingValues ->
