@@ -11,7 +11,9 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.us
 import com.premierdarkcoffee.sales.hermes.root.navigation.UserRoute
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 
-fun NavGraphBuilder.userRoute(popBackStack: () -> Unit, onEditUserButtonClicked: () -> Unit) {
+fun NavGraphBuilder.userRoute(popBackStack: () -> Unit,
+                              onEditUserButtonClicked: () -> Unit,
+                              onSettingsButtonClicked: () -> Unit) {
 
     composable<UserRoute> {
         val context = LocalContext.current
@@ -24,6 +26,6 @@ fun NavGraphBuilder.userRoute(popBackStack: () -> Unit, onEditUserButtonClicked:
         Log.d(TAG, "userRoute name: $name")
         Log.d(TAG, "userRoute latitude: $latitude")
         Log.d(TAG, "userRoute longitude: $longitude")
-        UserView(user, popBackStack = popBackStack, onEditUserButtonClicked = onEditUserButtonClicked)
+        UserView(user, popBackStack = popBackStack, onEditUserButtonClicked = onEditUserButtonClicked, onSettingsButtonClicked)
     }
 }
