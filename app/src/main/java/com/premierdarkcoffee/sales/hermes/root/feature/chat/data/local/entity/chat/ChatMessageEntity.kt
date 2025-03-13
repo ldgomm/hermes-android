@@ -15,7 +15,7 @@ data class ChatMessageEntity(@PrimaryKey(autoGenerate = false) val id: String = 
                              val secondMessage: String?,
                              val optionalProducts: List<ProductEntity>?) {
 
-    fun toChatMessage(): ChatMessage {
+    fun toChatGPTMessage(): ChatMessage {
         return ChatMessage(id = id,
                            isUser = isUser,
                            date = date,
