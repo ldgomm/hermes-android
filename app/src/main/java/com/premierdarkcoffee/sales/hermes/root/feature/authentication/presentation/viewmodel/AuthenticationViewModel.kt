@@ -14,7 +14,7 @@ import com.premierdarkcoffee.sales.hermes.root.feature.authentication.domain.mod
 import com.premierdarkcoffee.sales.hermes.root.feature.authentication.domain.usecase.CreateClientUseCase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.product.ImageDto
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.dto.store.GeoPointDto
-import com.premierdarkcoffee.sales.hermes.root.util.function.getUrlFor
+import com.premierdarkcoffee.sales.hermes.root.util.function.getUrlForEndpoint
 import com.premierdarkcoffee.sales.hermes.root.util.key.getClientKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -77,7 +77,7 @@ class AuthenticationViewModel @Inject constructor(application: Application,
             try {
                 val client: ClientDto = getFakeClient(user)
                 Log.d(TAG, "AuthenticationViewModel | Client: $client")
-                createClientUseCase(getUrlFor("cronos-client"),
+                createClientUseCase(getUrlForEndpoint("cronos-client"),
                                     PostClientRequest(key = clientKey, client = client)).collect { result ->
                     result.onSuccess { response ->
                         Log.d(TAG, "AuthenticationViewModel | signInWithFirebase: client created")
