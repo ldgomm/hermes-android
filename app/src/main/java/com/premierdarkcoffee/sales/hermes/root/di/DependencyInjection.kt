@@ -9,12 +9,14 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.repositor
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.repository.ChatRepository
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.repository.MessageRepository
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.local.repository.StoreRepository
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.service.PhraseService
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.service.ProductService
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.data.remote.service.StoreService
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.repositoriable.CartRepositoriable
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.repositoriable.ChatRepositoriable
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.repositoriable.MessageRepositoriable
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.repositoriable.StoreRepositoriable
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.serviceable.PhraseServiceable
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.serviceable.ProductServiceable
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.serviceable.StoreServiceable
 import dagger.Module
@@ -104,6 +106,12 @@ object DependencyInjection {
     @Provides
     fun provideAuthenticationServiceable(httpClient: HttpClient): AuthenticationServiceable {
         return AuthenticationService(httpClient)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDataServiceable(httpClient: HttpClient): PhraseServiceable {
+        return PhraseService(httpClient)
     }
 }
 
