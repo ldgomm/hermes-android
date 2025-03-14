@@ -23,6 +23,7 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.cart.
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.chat.DeleteChatMessagesUseCase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.chat.InsertChatMessageUseCase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.chat.ReadChatGPTMessagesUseCase
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.data.GetPhrasesUseCase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.message.FetchMessagesUseCase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.message.MarkMessageAsReadUseCase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.store.DeleteStoreByIdUseCase
@@ -31,7 +32,8 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.store
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.store.InsertStoreUseCase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.store.SendMessageToStoreUseCase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.usecase.store.UpdateStoreUseCase
-import com.premierdarkcoffee.sales.hermes.root.util.function.getUrlFor
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.search.SearchPhrase
+import com.premierdarkcoffee.sales.hermes.root.util.function.getUrlForEndpoint
 import com.premierdarkcoffee.sales.hermes.root.util.key.getClientKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -70,8 +72,9 @@ class ChatViewModel @Inject constructor(application: Application,
                                         private val insertStoreUseCase: InsertStoreUseCase,
                                         private val updateStoreUseCase: UpdateStoreUseCase,
                                         private val getAllStoresUseCase: GetAllStoresUseCase,
-                                        private val deleteStoreByIdUseCase: DeleteStoreByIdUseCase) :
-    AndroidViewModel(application) {
+                                        private val deleteStoreByIdUseCase: DeleteStoreByIdUseCase,
+
+                                        private val getPhraseUseCase: GetPhrasesUseCase) : AndroidViewModel(application) {
 
     // Retrieve client-specific key for API requests
     private val clientKey: String = getClientKey(getApplication<Application>().applicationContext)
@@ -80,18 +83,22 @@ class ChatViewModel @Inject constructor(application: Application,
     private val userId: String? = FirebaseAuth.getInstance().currentUser?.uid
 
     // StateFlows to manage chat messages, typing indicator, store messages, etc.
-    private val _gptMessages = MutableStateFlow<List<ChatMessage>>(emptyList())
-    val gptMessages: StateFlow<List<ChatMessage>> get() = _gptMessages
+    private val _chatGPTMessages = MutableStateFlow<List<ChatMessage>>(emptyList())
+    val chatGPTMessages: StateFlow<List<ChatMessage>> get() = _chatGPTMessages
 
     private val _isTyping = MutableStateFlow(false)
     val isTyping: StateFlow<Boolean> get() = _isTyping
 
+    //Chat messages
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
     val messages: StateFlow<List<Message>> get() = _messages
 
     // Mutex and Set to handle store IDs that have been processed
     private val seenStoreIds = mutableSetOf<String>()
     private val mutex = Mutex()
+
+    private val _searchPhrases = MutableStateFlow<List<SearchPhrase>>(emptyList())
+    val searchPhrases: StateFlow<List<SearchPhrase>> get() = _searchPhrases
 
     private val _stores = MutableStateFlow<Set<Store>>(emptySet())
     val stores: StateFlow<Set<Store>> get() = _stores
@@ -103,8 +110,6 @@ class ChatViewModel @Inject constructor(application: Application,
     val chatGPTMessageState: StateFlow<ChatGPTMessageState> get() = _chatGPTMessageState
 
     init {
-//        getLocalMessages()
-        // Initialize ViewModel by loading initial data
         initializeData()
     }
 
@@ -117,6 +122,7 @@ class ChatViewModel @Inject constructor(application: Application,
             getMessages()
             readChatGPTMessages()
             readStores()
+
         }
     }
 
@@ -141,7 +147,7 @@ class ChatViewModel @Inject constructor(application: Application,
                                                        clientId = userId ?: "",
                                                        location = geoPoint.toGeoPointDto(),
                                                        distance = distance)
-                    sendMessageToAIUseCase.invoke(getUrlFor(endpoint = "hermes"), request = request).toList().first()
+                    sendMessageToAIUseCase.invoke(getUrlForEndpoint(endpoint = "hermes"), request = request).toList().first()
                 }
 
                 handleAIResponse(responseResult)
@@ -271,7 +277,7 @@ class ChatViewModel @Inject constructor(application: Application,
      */
     private suspend fun fetchStore(storeId: String, completion: (Store) -> Unit) {
         try {
-            getStoreByIdUseCase(getUrlFor("hermes/store", storeId = storeId)).collect { result ->
+            getStoreByIdUseCase(getUrlForEndpoint("hermes/store", storeId = storeId)).collect { result ->
                 result.onSuccess { storeDto ->
                     Log.d(TAG, "fetchStore: ${storeDto.name}")
                     completion(storeDto.toStore())
@@ -352,7 +358,7 @@ class ChatViewModel @Inject constructor(application: Application,
                                        products = null,
                                        secondMessage = null,
                                        optionalProducts = null)
-        _gptMessages.value += errorMessage
+        _chatGPTMessages.value += errorMessage
         addChatMessage(errorMessage)
     }
 
@@ -379,13 +385,14 @@ class ChatViewModel @Inject constructor(application: Application,
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // Fetch all chat messages from the DB
-                val chatMessages = readChatGPTMessagesUseCase.invoke()
+                val chatGPTMessages = readChatGPTMessagesUseCase.invoke()
 
                 // Update the chat state and trigger the UI updates after retrieval
-                _chatGPTMessageState.value = ChatGPTMessageState(messages = chatMessages)
+                _chatGPTMessageState.value = ChatGPTMessageState(messages = chatGPTMessages)
 
                 // Now that the messages are successfully retrieved, update _gptMessages
-                _gptMessages.value = chatMessages.map { it.toChatMessage() }
+                _chatGPTMessages.value = chatGPTMessages.map { it.toChatGPTMessage() }
+                if (_chatGPTMessages.value.isEmpty() == true) getPhrases()
 
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to read chat messages: $e")
@@ -404,6 +411,23 @@ class ChatViewModel @Inject constructor(application: Application,
                 readChatGPTMessages()
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to delete chat messages: $e")
+            }
+        }
+    }
+
+    private fun getPhrases() {
+        val url = getUrlForEndpoint(endpoint = "data/phrases")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getPhraseUseCase(url).collect { result ->
+                    result.onSuccess { phrases ->
+                        _searchPhrases.value = phrases.map { it.toSearchPhrase() }
+                    }.onFailure { exception ->
+                        Log.e(TAG, "Error in getting Phrases: ${exception.message}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception in getting Phrases: ${e.message}")
             }
         }
     }
