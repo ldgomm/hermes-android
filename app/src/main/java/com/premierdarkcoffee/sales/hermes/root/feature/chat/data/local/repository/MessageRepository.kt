@@ -17,7 +17,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class MessageRepository @Inject constructor(private val databas: MainDatabase) : MessageRepositoriable {
+class MessageRepository @Inject constructor(private val database: MainDatabase) : MessageRepositoriable {
     private val db = FirebaseFirestore.getInstance().collection("messages")
 
     /**
