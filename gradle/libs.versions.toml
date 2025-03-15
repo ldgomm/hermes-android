@@ -40,6 +40,7 @@ serializationVersion = "1.7.3" #Serialization
 splashscreenVersion = "1.0.1" #Splashscreen
 onetapcompose = "1.0.12"
 lifecycleProcessVersion = "2.8.7"
+appcompatResourcesVersion = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -127,6 +128,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreenVersion" }
 onetap = { module = "com.github.stevdza-san:OneTapCompose", version.ref = "onetapcompose" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcessVersion" }
+androidx-appcompat-resources = { group = "androidx.appcompat", name = "appcompat-resources", version.ref = "appcompatResourcesVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
