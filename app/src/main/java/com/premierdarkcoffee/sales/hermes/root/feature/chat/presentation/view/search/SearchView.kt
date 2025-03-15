@@ -1,5 +1,7 @@
 package com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.search
 
+import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -58,6 +61,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -94,8 +98,6 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.se
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 import java.util.Date
 import java.util.UUID
-import kotlin.random.Random
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -176,8 +178,9 @@ fun SearchView(stores: Set<Store>,
         })
     }) { paddingValues ->
         Column(modifier = Modifier
-            .padding(paddingValues)
             .fillMaxSize()
+            .padding(paddingValues)
+            .imePadding()
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     isFocused = false
@@ -210,7 +213,9 @@ fun SearchView(stores: Set<Store>,
                 groupedMessages.forEach { (day, messages) ->
                     // Day header
                     item {
-                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp), contentAlignment = Alignment.Center) {
                             Text(text = day.time.formatDayDate(context),
                                  style = MaterialTheme.typography.bodySmall,
                                  color = MaterialTheme.colorScheme.onSurface,
@@ -237,15 +242,15 @@ fun SearchView(stores: Set<Store>,
                                     // Case 1: Both products and optionalProducts are available
                                     ServerMessageView(stores = stores,
                                                       user = user,
-                                                      message = message.secondMessage!!,
-                                                      products = message.optionalProducts!!,
+                                                      message = message.secondMessage,
+                                                      products = message.optionalProducts,
                                                       date = message.date,
                                                       onProductCardClicked = onProductCardClicked,
                                                       onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked)
                                     ServerMessageView(stores = stores,
                                                       user = user,
                                                       message = message.firstMessage,
-                                                      products = message.products!!,
+                                                      products = message.products,
                                                       date = message.date,
                                                       onProductCardClicked = onProductCardClicked,
                                                       onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked)
@@ -256,7 +261,7 @@ fun SearchView(stores: Set<Store>,
                                     ServerMessageView(stores = stores,
                                                       user = user,
                                                       message = message.firstMessage,
-                                                      products = message.products!!,
+                                                      products = message.products,
                                                       date = message.date,
                                                       onProductCardClicked = onProductCardClicked,
                                                       onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked)
@@ -266,8 +271,8 @@ fun SearchView(stores: Set<Store>,
                                     // Case 3: Only optionalProducts are available
                                     ServerMessageView(stores = stores,
                                                       user = user,
-                                                      message = message.secondMessage!!,
-                                                      products = message.optionalProducts!!,
+                                                      message = message.secondMessage,
+                                                      products = message.optionalProducts,
                                                       date = message.date,
                                                       onProductCardClicked = onProductCardClicked,
                                                       onNavigateToStoreMarkerClicked = onNavigateToStoreMarkerClicked)
@@ -386,22 +391,35 @@ fun SearchView(stores: Set<Store>,
     }
 }
 
-data class SearchPhrase(val id: UUID = UUID.randomUUID(), val icon: ImageVector, val text: String)
+data class SearchPhrase(val id: UUID = UUID.randomUUID(), val iconName: String,    // Was ImageVector, now a simple String
+                        val text: String)
+
+@SuppressLint("DiscouragedApi")
+fun Context.drawableIdByName(name: String): Int {
+    // Looks for a drawable resource by 'name' in your package
+    return resources.getIdentifier(name, "drawable", packageName)
+}
 
 @Composable
 fun SearchPhrasesList(onPhraseClick: (SearchPhrase) -> Unit) {
-    val searchPhrases = listOf(SearchPhrase(icon = ImageVector.vectorResource(map), text = "I need a new MacBook Pro"),
-                               SearchPhrase(icon = ImageVector.vectorResource(map), text = "What are the latest iPads?"),
-                               SearchPhrase(icon = ImageVector.vectorResource(map), text = "Show me the best deals on iPhones"),
-                               SearchPhrase(icon = ImageVector.vectorResource(map),
-                                            text = "Do you have Samsung 4K TVs?")).shuffled(Random(System.currentTimeMillis()))
+    val searchPhrases = listOf(SearchPhrase(iconName = "map", text = "I need a new MacBook Pro"),
+                               SearchPhrase(iconName = "map", text = "What are the latest iPads?"),
+                               SearchPhrase(iconName = "map", text = "Show me the best deals on iPhones"),
+                               SearchPhrase(iconName = "map", text = "Do you have Samsung 4K TVs?")).shuffled()
 
     if (searchPhrases.isNotEmpty()) {
+
         Row(modifier = Modifier
             .horizontalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             searchPhrases.forEach { phrase ->
+                val context = LocalContext.current
+                val iconResId = remember(phrase.iconName) {
+                    context.drawableIdByName(phrase.iconName)
+                }
+                val iconVector = ImageVector.vectorResource(id = iconResId)
+
                 Column(modifier = Modifier
                     .width(180.dp)
                     .clip(RoundedCornerShape(15.dp))
@@ -411,10 +429,11 @@ fun SearchPhrasesList(onPhraseClick: (SearchPhrase) -> Unit) {
                     .semantics { contentDescription = phrase.text },
                        horizontalAlignment = Alignment.Start,
                        verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Image(imageVector = phrase.icon,
+                    Image(imageVector = iconVector,
                           contentDescription = phrase.text,
                           modifier = Modifier.size(32.dp),
-                          contentScale = ContentScale.Fit)
+                          contentScale = ContentScale.Fit,
+                          colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface))
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = phrase.text,
                          style = MaterialTheme.typography.bodySmall,
