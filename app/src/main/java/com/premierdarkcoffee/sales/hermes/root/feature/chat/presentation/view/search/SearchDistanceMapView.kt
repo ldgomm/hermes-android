@@ -152,10 +152,10 @@ fun SearchDistanceMapView(userLocation: GeoPoint,
         }
     }
 
-    // Camera Animation
     LaunchedEffect(key1 = userLocation, key2 = distance) {
+        val zoom = getZoomLevel(distance)
         cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(LatLng(userLocation.coordinates[1],
-                                                                             userLocation.coordinates[0]),
-                                                                      getZoomLevel(distance)), 1000)
+                                                                             userLocation.coordinates[0]), zoom), 1000)
     }
+
 }
