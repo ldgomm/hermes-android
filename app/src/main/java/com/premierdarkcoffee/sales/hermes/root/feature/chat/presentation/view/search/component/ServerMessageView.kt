@@ -122,17 +122,19 @@ fun ServerMessageView(stores: Set<Store>,
                     LocalContext.current.getString(R.string.view_stores_on_map)
                 }
 
-                Text(text = storeText,
-                     modifier = Modifier
-                         .clickable { openBottomSheet = true }
-                         .fillMaxWidth()
-                         .wrapContentWidth(Alignment.CenterHorizontally)
-                         .padding(vertical = 4.dp)
-                         .background(Color.Gray.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
-                         .padding(4.dp),
-                     color = MaterialTheme.colorScheme.primary,
-                     style = MaterialTheme.typography.bodySmall)
+                if (products?.isNotEmpty() == true) {
+                    Text(text = storeText,
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .wrapContentWidth(Alignment.CenterHorizontally)
+                             .padding(vertical = 4.dp)
+                             .background(Color.Gray.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
+                             .clickable { openBottomSheet = true }
+                             .padding(4.dp),
+                         color = MaterialTheme.colorScheme.primary,
+                         style = MaterialTheme.typography.bodySmall)
 
+                }
             }
         }
     }
