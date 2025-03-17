@@ -12,6 +12,7 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.chat.Ch
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.store.GeoPoint
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.model.store.Store
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.domain.state.ChatGPTMessageState
+import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.search.SearchPhrase
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.search.SearchView
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.viewmodel.ChatViewModel
 import com.premierdarkcoffee.sales.hermes.root.navigation.SearchRoute
@@ -26,9 +27,10 @@ fun NavGraphBuilder.searchRoute(navController: NavHostController,
 
     composable<SearchRoute> { backStackEntry ->
         val viewModel = backStackEntry.sharedViewModel<ChatViewModel>(navController = navController)
-        val gptMessages: List<ChatMessage> by viewModel.gptMessages.collectAsState()
+        val gptMessages: List<ChatMessage> by viewModel.chatGPTMessages.collectAsState()
         val chatGPTMessageState: ChatGPTMessageState by viewModel.chatGPTMessageState.collectAsState()
 
+        val searchPhrases: List<SearchPhrase> by viewModel.searchPhrases.collectAsState()
         val stores: Set<Store> by viewModel.stores.collectAsState()
         val isTyping by viewModel.isTyping.collectAsState()
 
@@ -42,9 +44,9 @@ fun NavGraphBuilder.searchRoute(navController: NavHostController,
         LaunchedEffect(gptMessages) {
             chatGPTMessageState.messages?.let { messages ->
                 val storeIds = messages.flatMap { message ->
-                    val productsStoreIds = message.toChatMessage().products?.mapNotNull { it.storeId } ?: emptyList()
+                    val productsStoreIds = message.toChatGPTMessage().products?.mapNotNull { it.storeId } ?: emptyList()
                     val optionalProductsStoreIds =
-                        message.toChatMessage().optionalProducts?.mapNotNull { it.storeId } ?: emptyList()
+                        message.toChatGPTMessage().optionalProducts?.mapNotNull { it.storeId } ?: emptyList()
                     productsStoreIds + optionalProductsStoreIds
                 }
                 if (storeIds.isNotEmpty()) {
@@ -53,9 +55,10 @@ fun NavGraphBuilder.searchRoute(navController: NavHostController,
             }
         }
 
-        SearchView(stores = stores,
+        SearchView(searchPhrases = searchPhrases,
+                   stores = stores,
                    user = user,
-                   chatMessages = chatGPTMessageState.messages?.map { it.toChatMessage() } ?: emptyList(),
+                   chatMessages = chatGPTMessageState.messages?.map { it.toChatGPTMessage() } ?: emptyList(),
                    isTyping = isTyping,
                    sendMessage = viewModel::sendMessage,
                    onProductCardClicked = onProductCardClicked,
