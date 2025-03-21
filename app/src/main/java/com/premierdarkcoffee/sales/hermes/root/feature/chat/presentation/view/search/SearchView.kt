@@ -75,7 +75,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.premierdarkcoffee.sales.hermes.R
-import com.premierdarkcoffee.sales.hermes.R.drawable.arrow_back
 import com.premierdarkcoffee.sales.hermes.R.drawable.delete_outline
 import com.premierdarkcoffee.sales.hermes.R.drawable.map
 import com.premierdarkcoffee.sales.hermes.R.string.ask_anything
@@ -97,11 +96,11 @@ import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.se
 import com.premierdarkcoffee.sales.hermes.root.feature.chat.presentation.view.search.component.UserMessageView
 import com.premierdarkcoffee.sales.hermes.root.util.helper.SharedPreferencesHelper
 import java.util.Date
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchView(stores: Set<Store>,
+fun SearchView(searchPhrases: List<SearchPhrase>,
+               stores: Set<Store>,
                user: User,
                chatMessages: List<ChatMessage>,
                isTyping: Boolean,
@@ -151,7 +150,7 @@ fun SearchView(stores: Set<Store>,
                  style = titleStyle)
         }, navigationIcon = {
             IconButton(onClick = { popBackStack() }) {
-                Icon(imageVector = ImageVector.vectorResource(id = arrow_back), contentDescription = null)
+                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.arrow_back), contentDescription = null)
             }
         }, actions = {
             if (doNotShowAgainDistanceAlert) {
@@ -197,7 +196,7 @@ fun SearchView(stores: Set<Store>,
                 // Empty state with search phrases
                 item {
                     if (chatMessages.isEmpty()) {
-                        SearchPhrasesList { searchPhrase ->
+                        SearchPhrasesList(searchPhrases = searchPhrases) { searchPhrase ->
                             val geoPoint = GeoPoint(type = "Point",
                                                     coordinates = listOf(SharedPreferencesHelper.getLongitude(context),
                                                                          SharedPreferencesHelper.getLatitude(context)))
@@ -391,9 +390,6 @@ fun SearchView(stores: Set<Store>,
     }
 }
 
-data class SearchPhrase(val id: UUID = UUID.randomUUID(), val iconName: String,    // Was ImageVector, now a simple String
-                        val text: String)
-
 @SuppressLint("DiscouragedApi")
 fun Context.drawableIdByName(name: String): Int {
     // Looks for a drawable resource by 'name' in your package
@@ -401,12 +397,7 @@ fun Context.drawableIdByName(name: String): Int {
 }
 
 @Composable
-fun SearchPhrasesList(onPhraseClick: (SearchPhrase) -> Unit) {
-    val searchPhrases = listOf(SearchPhrase(iconName = "map", text = "I need a new MacBook Pro"),
-                               SearchPhrase(iconName = "map", text = "What are the latest iPads?"),
-                               SearchPhrase(iconName = "map", text = "Show me the best deals on iPhones"),
-                               SearchPhrase(iconName = "map", text = "Do you have Samsung 4K TVs?")).shuffled()
-
+fun SearchPhrasesList(searchPhrases: List<SearchPhrase>, onPhraseClick: (SearchPhrase) -> Unit) {
     if (searchPhrases.isNotEmpty()) {
 
         Row(modifier = Modifier
@@ -415,8 +406,8 @@ fun SearchPhrasesList(onPhraseClick: (SearchPhrase) -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             searchPhrases.forEach { phrase ->
                 val context = LocalContext.current
-                val iconResId = remember(phrase.iconName) {
-                    context.drawableIdByName(phrase.iconName)
+                val iconResId = remember(phrase.androidIcon) {
+                    context.drawableIdByName(phrase.androidIcon)
                 }
                 val iconVector = ImageVector.vectorResource(id = iconResId)
 
